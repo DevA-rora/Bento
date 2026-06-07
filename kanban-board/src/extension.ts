@@ -18,6 +18,22 @@ export function activate(context: vscode.ExtensionContext) {
 			{} // 4. options: leave as {} for now.
 		);
 
+		panel.webview.html = `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Kanban Board</title>
+		</head>
+		<body>
+			<h1>Kanban Board</h1>
+		</body>
+		</html>
+		`
+		
+		// lets see if this works!
+
 	});
 
 	context.subscriptions.push(boardDisposable);
