@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('kanban-board.helloWorld', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Kanban Board! (yay clapping)!');
+		vscode.window.showInformationMessage('Why is ts so complicated???? I have no idea.');
 	});
 
 	context.subscriptions.push(disposable);
