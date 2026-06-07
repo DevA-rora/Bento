@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "kanban-board.helloWorld",
-        "title": "Hello World"
+        "command": "kanban-board.openBoard",
+        "title": "Open Kanban Board"
       }
     ]
   },

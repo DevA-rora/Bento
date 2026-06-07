@@ -1,26 +1,27 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+// disposables are little objects that keep track of things.
+
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+// this is like "main" in python.
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
+	// print congrats to the console.
 	console.log('Congratulations, your extension "kanban-board" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('kanban-board.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Why is ts so complicated???? I have no idea.');
+	// register the webview command:
+	const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard', () => {
+		// create a webview:
+		const panel = vscode.window.createWebviewPanel(
+			'kanbanBoard.view', // 1. viewType: unique string ID
+			'Kanban Board', // 2. title: what shows on the tag when open in the editor
+			vscode.ViewColumn.One, // means that the webview opens in the MAIN editor area.
+			{} // 4. options: leave as {} for now.
+		);
+
 	});
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(boardDisposable);
 }
 
-// This method is called when your extension is deactivated
+// run "main"
 export function deactivate() {}
