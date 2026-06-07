@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="board">
+		<div class="column" id="column-todo">
+			<h2> Todo </h2>
+			<!-- cards will go here later -->
+		</div>
+		<div class="column" id="column-doing">
+			<h2> Doing </h2>
+			<!-- cards will go here later -->
+		</div>
+		<div class="column" id="column-done">
+			<h2> Done </h2>
+			<!-- cards will go here later -->
+		</div>
+
+
+	</div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Kanban Board</title>
+
+</head>
+
+<body>
+	<h1>Kanban Board</h1>
+
+	<button id="thoughtsButton">Thoughts?</button>
+
+	<script>
+		const vscode = acquireVsCodeApi();
+		document.getElementById('thoughtsButton').addEventListener('click', () => {
+			vscode.postMessage({ command: 'buttonClicked', text: 'Hello from the webview!' });
+			console.log('button clicked');
+		});
+	</script>
+
+	</body>
+</html> -->
