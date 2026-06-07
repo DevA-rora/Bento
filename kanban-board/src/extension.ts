@@ -13,6 +13,7 @@ interface Card {
 	column: string;
 }
 
+// built hardcoded cards array
 let cards: Card[] = [
 	{ id: 1, title: "Fix Bug", description: "something lol", column: "todo"},
 	{ id: 2, title: "Fix Bug", description: "another something lol", column: "doing"},
@@ -35,23 +36,49 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.ViewColumn.One, // means that the webview opens in the MAIN editor area.
 			{
 				enableScripts: true, // enables javascript in the webview. (the JSX code)
+				localResourceRoots: [
+					vscode.Uri.joinPath(context.extensionUri, 'media') // lets us reference files in 'media'
+				]
 			}
 		);
 
-		const htmlPath = path.join(context.extensionPath, 'media', 'board.html'); // path to board.html
-		panel.webview.html = fs.readFileSync(htmlPath, 'utf8'); // read the file and convert it to a string to pass as the webview.
-		
-		// listener function:		
+		// extra fluff because we're a vscode extension
+		// basically we're allowing ourselves to use script.js and style.css.
+		const scriptUri = panel.webview.asWebviewUri(
+			vscode.Uri.joinPath(context.extensionUri, 'media', 'script.js')
+		)
+
+		const styleUri = panel.webview.asWebviewUri(
+			vscode.Uri.joinPath(context.extensionUri, 'media', 'style.css')
+		)
+
+		// path to board.html
+		const htmlPath = path.join(context.extensionPath, 'media', 'board.html'); 
+
+		// read the HTML file into a string variable.
+		let html = fs.readFileSync(htmlPath, 'utf-8');
+
+		// replace the scriptUri placeholder in board.html to the REAL URI
+		html = html.replace('{{scriptUri}}', scriptUri.toString());
+
+		// do the same thing, but for the styleURI
+		html = html.replace('{{styleUri}}', styleUri.toString());
+
+		// assign the final, modified HTML to the webview:
+		panel.webview.html = html;
+
+	
+		// listener function (so that we can actually make something of the user interaction)
+		// checks if the user clicked the button
 		panel.webview.onDidReceiveMessage((message) => {
-			console.log('Message from webview:', message);
-			if (message.command === 'buttonClicked') {
-				vscode.window.showInformationMessage('Button clicked!');
+			if (message.command == 'ready') {
+				panel.webview.postMessage({command: 'init', cards: cards});
 			}
 		});
 
 	});
 
-
+	// when extension stops, clean things up (deregister the command from the command pallette, free internal handles, ect)
 	context.subscriptions.push(boardDisposable);
 
 }
