@@ -1,0 +1,15 @@
+/* card compelted styling: */
+.card.completed {
+    opacity: 0.5; /* make entire card 50% transparent */
+    text-decoration: line-through; /* strikethrough */
+}
+
+/* baseline card styling: */
+.card {
+    background: #2d2d2d;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    display: flex;
+}

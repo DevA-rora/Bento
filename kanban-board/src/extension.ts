@@ -5,13 +5,13 @@ import * as vscode from 'vscode'; // VSCode extensions API
 import * as fs from 'fs'; // file system API (lets us read files)
 import * as path from 'path'; // path API (lets us build paths)
 
-
 // build the card object (I can modify this later)
 interface Card {
 	id: number;
 	title: string;
 	description?: string;
 	column: string;
+	completed: boolean;
 }
 
 // convert todo.md to card interface
@@ -28,14 +28,14 @@ function parseMarkdown(text: string): Card[] {
 		if (line.startsWith('# ')) {
 			// get rid of the first 2 characters ("# " is 2 chars. the "#", and the " ")
 			// .trim strips leading and trailing whitespaces.
-			currentColumn = line.slice(2).trim().toLowerCase(); 
+			currentColumn = line.slice(2).trim().toLowerCase();
 
 		} else if (line.startsWith('- [ ]') || line.startsWith('- [x]')) {
 			// remove first 6 chars.
 			const title = line.slice(6).trim();
 
 			// const for next line & define what a description is:
-			const nextLine = lines[i+1];
+			const nextLine = lines[i + 1];
 			let description: string | undefined;
 
 			// check if the next line isn't a heading or a task.
@@ -44,11 +44,15 @@ function parseMarkdown(text: string): Card[] {
 				i++; // skip the next description.
 			}
 
+			// const for checking if a task is completed:
+			const completed = line.startsWith('- [x]');
+
 			// const for card interface
 			const card: Card = {
 				id: nextId,
 				title: title,
 				column: currentColumn,
+				completed: completed,
 			};
 			// if the description exists, then let the card description be the description.
 			if (description) {
@@ -62,44 +66,50 @@ function parseMarkdown(text: string): Card[] {
 	return cards; // return cards array.
 }
 
-// built hardcoded cards array (legacy)
-// let cards: Card[] = [
-// 	{ id: 1, title: "Fix Bug", description: "something lol", column: "todo"},
-// 	{ id: 2, title: "Fix Bug", description: "another something lol", column: "doing"},
-// 	{ id: 3, title: "Fix Bug", column: "doing"}, // don't need a description because of the "?"
-// 	{ id: 4, title: "This is another todo that's not fix bug lol", column: "done"}
-// ]
-
-
 // this is like "main" in python.
 export function activate(context: vscode.ExtensionContext) {
 
-	// print congrats to the console.
-	console.log('Extension "kanban-board" is now active!');
-	console.log('Cards Array:', cards);
-
-	const sampleMarkdown = `
-
-	# Todo
-	- [ ] Clean my room
-	It's an absolute pigstye!
-	- [ ] Shower
-
-	# Doing
-	- [ ] Write kanban extension
-	It's fun, but kinda brutal. I've never made a vscode extension before...
-
-	# Done
-	- [x] Buy groceries
-	Yay clapping!
-
-	`;
-
-	console.log(parseMarkdown(sampleMarkdown));
 
 
 	// register the webview command:
 	const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard', () => {
+		// find the workspace
+		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+		// ? is optional chaining. doesn't crash if workspace folders is undefined.
+		if (!workspaceFolder) {
+			vscode.window.showErrorMessage("Please open a folder to use the Kanban Board!");
+			return;
+		}
+
+		// set todo.md file path:
+		const todoPath = path.join(workspaceFolder.uri.fsPath, 'todo.md');
+		const todoExists = fs.existsSync(todoPath)
+		// check if todo.md exists:
+		if (todoExists) {
+			// then continue
+		} else if (!todoExists) {
+			// First time! Create an empty todo file w/kanban template:
+			const starterContent = `# Todo
+- [ ] Add your todos here
+			
+# Doing
+- [ ] Add things you're working on here
+			
+# Done
+- [x] Stuff you've finished!
+			`;
+			fs.writeFileSync(todoPath, starterContent, 'utf-8');
+		}
+
+		// now we know the file exists, we can get the markdown string, and parse it!
+		const markdown = fs.readFileSync(todoPath, 'utf-8');
+		const cards = parseMarkdown(markdown);
+
+		// console logs now that all the stuff is working!
+		console.log('Extension "kanban-board" is now active!'); // print congrats to the console.
+		console.log('Cards Array:', cards); // print out cards array to the console.
+		console.log(parseMarkdown(markdown)); // print parsed markdown.
+
 		// create a webview:
 		const panel = vscode.window.createWebviewPanel(
 			'kanbanBoard.view', // 1. viewType: unique string ID
@@ -124,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
 		)
 
 		// path to board.html
-		const htmlPath = path.join(context.extensionPath, 'media', 'board.html'); 
+		const htmlPath = path.join(context.extensionPath, 'media', 'board.html');
 
 		// read the HTML file into a string variable.
 		let html = fs.readFileSync(htmlPath, 'utf-8');
@@ -138,12 +148,12 @@ export function activate(context: vscode.ExtensionContext) {
 		// assign the final, modified HTML to the webview:
 		panel.webview.html = html;
 
-	
+
 		// listener function (so that we can actually make something of the user interaction)
 		// checks if the user clicked the button
 		panel.webview.onDidReceiveMessage((message) => {
 			if (message.command == 'ready') {
-				panel.webview.postMessage({command: 'init', cards: cards});
+				panel.webview.postMessage({ command: 'init', cards: cards });
 			}
 		});
 
@@ -155,4 +165,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // run "main"
-export function deactivate() {}
+export function deactivate() { }
