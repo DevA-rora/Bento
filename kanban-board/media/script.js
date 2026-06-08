@@ -3,23 +3,27 @@ const vscode = acquireVsCodeApi();
 
 function renderCards(cards) {
     cards.forEach((card) => {
+        // card countainer
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
 
-    // put the card on screen:
-    const cardEl = document.createElement('div');
+        // build title element and put it inside the card:
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = card.title;
+        cardEl.appendChild(titleEl);
 
-    // put the title text in the card
-    cardEl.textContent = card.title;
+        // build description element only if it exists
+        // put it inside the card:
+        if (card.description) {
+            const descEl = document.createElement('p');
+            descEl.textContent = card.description;
+            cardEl.appendChild(descEl);
+        }
 
-    // css name so we can style it:
-    cardEl.className = 'card';
-
-    // find the column it belongs to:
-    const columnEl = document.getElementById('column-' + card.column);
-
-    // plug the card into the column. it now appears on screen:
-    columnEl.appendChild(cardEL);
-        
-    })
+        // find the right column and put the entire card in it:
+        const columnEl = document.getElementById('column-' + card.column);
+        columnEl.appendChild(cardEl)
+    });
 }
 
 // listener function
