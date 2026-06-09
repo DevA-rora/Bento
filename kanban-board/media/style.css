@@ -26,3 +26,9 @@
     padding: 8px 12px;
     margin-bottom: 8px;
 }
+
+.card h3[contenteditable="true"]:focus {
+    outline: 2px solid #007acc;
+    outline-offset: 2px;
+    border-radius: 2px;
+}

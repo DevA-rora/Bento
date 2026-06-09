@@ -163,10 +163,30 @@ export function activate(context: vscode.ExtensionContext) {
 		webviewPanel.webview.html = html;
 
 		// handle messages from the webview:
-		webviewPanel.webview.onDidReceiveMessage((message) => {
+		webviewPanel.webview.onDidReceiveMessage(async (message) => {
 			if (message.command == 'ready') {
 				const cards = parseMarkdown(document.getText());
 				webviewPanel.webview.postMessage({ command: 'init', cards });
+			} else if (message.command === 'updateTitle') {
+				// parse current state:
+				const cards = parseMarkdown(document.getText());
+
+				// find cards by ID and mutate its title:
+				const card = cards.find(c => c.id === message.id);
+				if (!card) return;
+				card.title = message.newTitle;
+
+				// serialise back to markdown:
+				const newText = serialiseCards(cards);
+
+				// apply as a workspace edit:
+				const edit = new vscode.WorkspaceEdit();
+				edit.replace(
+					document.uri,
+					new vscode.Range(0, 0, document.lineCount, 0),
+					newText
+				);
+				await vscode.workspace.applyEdit(edit);
 			}
 		});
 	}

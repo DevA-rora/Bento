@@ -45,6 +45,20 @@ function renderCards(cards) {
         // build title element and put it inside the card:
         const titleEl = document.createElement('h3');
         titleEl.textContent = card.title;
+
+        // make it editable:
+        titleEl.contentEditable = 'true';
+        titleEl.addEventListener('blur', () => {
+            const newTitle = titleEl.textContent.trim();
+            if (newTitle !== card.title) {
+                vscode.postMessage({
+                    command: 'updateTitle',
+                    id: card.id,
+                    newTitle: newTitle
+                });
+            }
+        });
+
         cardEl.appendChild(titleEl);
 
         // build description element only if it exists
