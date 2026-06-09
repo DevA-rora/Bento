@@ -17,6 +17,15 @@
         "command": "kanban-board.openBoard",
         "title": "Open Kanban Board"
       }
+    ],
+    "customEditors": [
+      {
+        "viewType": "kanbanBoard.editor",
+        "displayName": "Kanban Board",
+        "selector": [ { "filenamePattern": "**/todo.md" }
+        ],
+        "priority": "option" 
+      }
     ]
   },
   "scripts": {
