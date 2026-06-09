@@ -19,7 +19,7 @@ function parseMarkdown(text: string): Card[] {
 	const lines = text.split('\n');
 	const cards: Card[] = [];
 	let currentColumn = '';
-	let nextId = 1;
+	let nextId = 0;
 
 	// for all the lines in the markdown file / string.
 	for (let i = 0; i < lines.length; i++) {
@@ -37,6 +37,7 @@ function parseMarkdown(text: string): Card[] {
 			// const for next line & define what a description is:
 			const nextLine = lines[i + 1];
 			let description: string | undefined;
+			nextId++; // increment the taskId
 
 			// check if the next line isn't a heading or a task.
 			if (nextLine && !nextLine.startsWith('# ') && !nextLine.startsWith('- [')) {

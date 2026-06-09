@@ -1,3 +1,17 @@
+.board {
+    /* flex does the following:
+    - lets me arrange items horizontally instead of vertically.
+    */
+    display: flex;
+    gap: 16px; /* puts 16px space between flex items */
+    padding: 16px; /* space between edge of webview & columns */
+}
+
+.column {
+    flex: 1; /* each column takes equal share of the row. */
+    min-width: 0; /* allows column to shrink as required. (whatever that means) */
+}
+
 /* card compelted styling: */
 .card.completed {
     opacity: 0.5; /* make entire card 50% transparent */
@@ -11,5 +25,4 @@
     border-radius: 6px;
     padding: 8px 12px;
     margin-bottom: 8px;
-    display: flex;
 }
