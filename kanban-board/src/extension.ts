@@ -67,19 +67,70 @@ function parseMarkdown(text: string): Card[] {
 	return cards; // return cards array.
 }
 
+// serialise cards:
+function serialiseCards(cards: Card[]): string {
+	// find unique columns in order of first appearance:
+	const columns: string[] = [];
+	for (const card of cards) {
+		if (!columns.includes(card.column)) {
+			columns.push(card.column);
+		}
+	}
+
+	// build the markdown lines
+	const lines: string[] = [];
+	for (const column of columns) {
+		// add column heading:
+		lines.push('# ' + column.charAt(0).toUpperCase() + column.slice(1));
+
+		// for each card in this column, add its line(s)
+
+		const cardsInColumn = cards.filter(c => c.column === column);
+		for (const card of cardsInColumn) {
+			const marker = card.completed ? '- [x]' : '- [ ]';
+			lines.push(`${marker} ${card.title}}`);
+			if (card.description) {
+				lines.push(card.description);
+			}
+		}
+
+		// blank line between columns:
+		lines.push('');
+	}
+	// join into a single string
+	return lines.join('\n');
+}
+
 // this is like "main" in python.
 export function activate(context: vscode.ExtensionContext) {
 
+	// 
+	const openAsKanban = vscode.commands.registerCommand(
+		'kanban-board.openAsKanban',
+		(uri: vscode.Uri) => {
+			vscode.commands.executeCommand('vscode.openWith', uri, 'kanbanBoard.editor');
+		}
+	);
 
-// custom editor provider for todo.md
-const kanbanProvider: vscode.CustomTextEditorProvider = {
-	resolveCustomTextEditor(document, webviewPanel, token) {
-		const changeSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
-			if (e.document.uri.toString() === document.uri.toString()) {
-				const cards = parseMarkdown(document.getText());
-				webviewPanel.webview.postMessage({ command: 'init', cards });
-			}
-		})
+	// 
+	const openAsText = vscode.commands.registerCommand(
+		'kanban-board.openAsText',
+		(uri: vscode.Uri) => {
+			vscode.commands.executeCommand('vscode.openWith', uri, 'default');
+		}
+	);
+	context.subscriptions.push(openAsKanban, openAsText);
+
+
+	// custom editor provider for todo.md
+	const kanbanProvider: vscode.CustomTextEditorProvider = {
+		resolveCustomTextEditor(document, webviewPanel, token) {
+			const changeSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
+				if (e.document.uri.toString() === document.uri.toString()) {
+					const cards = parseMarkdown(document.getText());
+					webviewPanel.webview.postMessage({ command: 'init', cards });
+				}
+			})
 
 		// configure webview options:
 		webviewPanel.webview.options = {
