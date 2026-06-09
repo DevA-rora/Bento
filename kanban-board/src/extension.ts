@@ -88,7 +88,7 @@ function serialiseCards(cards: Card[]): string {
 		const cardsInColumn = cards.filter(c => c.column === column);
 		for (const card of cardsInColumn) {
 			const marker = card.completed ? '- [x]' : '- [ ]';
-			lines.push(`${marker} ${card.title}}`);
+			lines.push(`${marker} ${card.title}`);
 			if (card.description) {
 				lines.push(card.description);
 			}
