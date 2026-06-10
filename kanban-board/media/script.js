@@ -11,11 +11,19 @@ function notifyReorder() {
         });
         columns.push({ name: name, cardIds: cardIds });
     });
+    console.log('[notifyReorder] posting:', JSON.stringify(columns));
     vscode.postMessage({ command: 'reorderBoard', columns: columns });
 }
 
 function renderCards(cards, columns) {
     const boardEl = document.querySelector('.board'); // this
+
+    // destroy any Sortable already attached to boardEl from a previous render
+    // (boardEl is the same element across renders; new Sortables stack otherwise)
+    const existingBoardSortable = Sortable.get(boardEl);
+    if (existingBoardSortable) {
+        existingBoardSortable.destroy();
+    }
 
     // clear board:
     boardEl.innerHTML = '';
@@ -124,8 +132,9 @@ function renderCards(cards, columns) {
 window.addEventListener('message', (event) => {
     const message = event.data;
     if (message.command == 'init') {
-        renderCards(message.cards, message.columns)
-        console.log('Got cards:', message.cards);
+        console.log('[init] columns:', JSON.stringify(message.columns), 'cardCount:', message.cards.length);
+        console.log('[init] cards:', JSON.stringify(message.cards));
+        renderCards(message.cards, message.columns);
     }
 });
 

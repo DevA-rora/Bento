@@ -118,7 +118,13 @@ export function activate(context: vscode.ExtensionContext) {
 	// custom editor provider for todo.md
 	const kanbanProvider: vscode.CustomTextEditorProvider = {
 		resolveCustomTextEditor(document, webviewPanel, token) {
+			// flag to skip re-rendering when WE are the source of the change
+			// (e.g. our own applyEdit from drag/title update). Otherwise we get a feedback loop:
+			// webview drag -> applyEdit -> doc change -> init -> webview re-render -> ...
+			let isApplyingEdit = false;
+
 			const changeSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
+				if (isApplyingEdit) return; // our own edit, ignore
 				if (e.document.uri.toString() === document.uri.toString()) {
 					const { cards, columns } = parseMarkdown(document.getText());
 					webviewPanel.webview.postMessage({ command: 'init', cards, columns });
@@ -183,11 +189,19 @@ export function activate(context: vscode.ExtensionContext) {
 						new vscode.Range(0, 0, document.lineCount, 0),
 						newText
 					);
-					await vscode.workspace.applyEdit(edit);
+					isApplyingEdit = true;
+					try {
+						await vscode.workspace.applyEdit(edit);
+					} finally {
+						isApplyingEdit = false;
+					}
 
 				} else if (message.command === 'reorderBoard') {
+					console.log('[reorderBoard] message.columns:', JSON.stringify(message.columns));
+
 					// parse current state:
 					const { cards: oldCards } = parseMarkdown(document.getText());
+					console.log('[reorderBoard] oldCards count:', oldCards.length, 'ids:', oldCards.map(c => c.id));
 
 					// build a lookup by id:
 					const cardLookup = new Map<number, Card>();
@@ -207,15 +221,22 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 					// pull column names from the webview's payload, in the order it sent them in:
 					const newColumns = message.columns.map((c: {name: string}) => c.name);
+					console.log('[reorderBoard] newCards count:', newCards.length, 'ids:', newCards.map(c => c.id));
 					// serialise + apply as a workspace edit
 					const newText = serialiseCards(newCards, newColumns);
+					console.log('[reorderBoard] newText:\n' + newText);
 					const edit = new vscode.WorkspaceEdit();
 					edit.replace(
 						document.uri,
 						new vscode.Range(0, 0, document.lineCount, 0),
 						newText
 					);
-					await vscode.workspace.applyEdit(edit);
+					isApplyingEdit = true;
+					try {
+						await vscode.workspace.applyEdit(edit);
+					} finally {
+						isApplyingEdit = false;
+					}
 				}
 			});
 		}
