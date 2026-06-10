@@ -71,18 +71,6 @@ function renderCards(cards, columns) {
         // default to view mode (edit requires dlbclick)
         titleEl.contentEditable = 'false';
 
-        // when the user clicks a card twice, activate edit mode.
-        titleEl.addEventListener('dblclick', () => {
-            titleEl.contentEditable = 'true'; // lets you edit text
-            titleEl.focus(); // means the element is now recieving keyboard input.
-        });
-
-        titleEl.addEventListener('keydown', (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                titleEl.blur();
-            }
-        });
 
         // opposite of focus, when the user clicks away.
         titleEl.addEventListener('blur', () => {
@@ -99,13 +87,42 @@ function renderCards(cards, columns) {
 
         cardEl.appendChild(titleEl);
 
-        // build description element only if it exists
-        // put it inside the card:
-        if (card.description) {
-            const descEl = document.createElement('p');
-            descEl.textContent = card.description;
-            cardEl.appendChild(descEl);
-        }
+        // description element always created & always shown,
+        // so there's something to double click, even on empty cards:
+        const descEl = document.createElement('p');
+        descEl.className = 'description';
+        descEl.textContent = card.description || ''; // empty string when none
+        descEl.contentEditable = 'false'; // view mode by default
+
+        cardEl.appendChild(descEl);
+
+        // when the user clicks a card twice, activate edit mode.
+        titleEl.addEventListener('dblclick', () => {
+            titleEl.contentEditable = 'true'; // lets you edit text for the todo title
+            // lets you edit text for the task description
+            descEl.contentEditable = 'true';
+            titleEl.focus(); // means the element is now recieving keyboard input.
+        });
+
+
+        // blur event for the description.
+        descEl.addEventListener('blur', () => {
+            const newDescription = descEl.textContent.trim();
+            if (newDescription !== (card.description || '')) {
+                vscode.postMessage({
+                    command: 'updateDescription',
+                    id: card.id,
+                    newDescription: newDescription
+                });
+            }
+        });
+
+        titleEl.addEventListener('keydown', (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                titleEl.blur();
+            }
+        });
 
         // find the right column and put the entire card in it:
         const listEl = document.getElementById('cardlist-' + card.column);
@@ -116,7 +133,7 @@ function renderCards(cards, columns) {
         new Sortable(listEl, {
             group: 'cards',
             animation: 150,
-            onEnd: notifyReorder, 
+            onEnd: notifyReorder,
         });
     });
 

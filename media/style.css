@@ -33,8 +33,20 @@
     border-radius: 2px;
 }
 
+.card p.description[contenteditable="true"]:empty::before {
+    content: 'Add a description...';
+    opacity: 0.5;
+    font-style: italic;
+}
+
 /* changes the cursor when hovering over the title */
 /* the h3 means when I click on the 'h3' part of the card, or the text. */
 .card h3 {
     cursor: text;
+}
+
+.placeholder {
+    opacity: 0.5;
+    font-style: italic;
+    /* size: 2em; */ /* maybe not include this, should already be styled... */
 }
