@@ -15,9 +15,10 @@ interface Card {
 }
 
 // convert todo.md to card interface
-function parseMarkdown(text: string): Card[] {
+function parseMarkdown(text: string): { cards: Card[], columns: string[] } {
 	const lines = text.split('\n');
 	const cards: Card[] = [];
+	const columns: string[] = [];
 	let currentColumn = '';
 	let nextId = 0;
 
@@ -29,6 +30,9 @@ function parseMarkdown(text: string): Card[] {
 			// get rid of the first 2 characters ("# " is 2 chars. the "#", and the " ")
 			// .trim strips leading and trailing whitespaces.
 			currentColumn = line.slice(2).trim().toLowerCase();
+			if (!columns.includes(currentColumn)) {
+				columns.push(currentColumn);
+			}
 
 		} else if (line.startsWith('- [ ]') || line.startsWith('- [x]')) {
 			// remove first 6 chars.
@@ -64,27 +68,18 @@ function parseMarkdown(text: string): Card[] {
 			cards.push(card);
 		}
 	}
-	return cards; // return cards array.
+	return { cards, columns }; // return cards array.
 }
 
 // serialise cards:
-function serialiseCards(cards: Card[]): string {
-	// find unique columns in order of first appearance:
-	const columns: string[] = [];
-	for (const card of cards) {
-		if (!columns.includes(card.column)) {
-			columns.push(card.column);
-		}
-	}
-
-	// build the markdown lines
+function serialiseCards(cards: Card[], columns: string[]): string {
 	const lines: string[] = [];
+
 	for (const column of columns) {
-		// add column heading:
+		// column heading
 		lines.push('# ' + column.charAt(0).toUpperCase() + column.slice(1));
 
-		// for each card in this column, add its line(s)
-
+		// cards in this column (filtered from the full list)
 		const cardsInColumn = cards.filter(c => c.column === column);
 		for (const card of cardsInColumn) {
 			const marker = card.completed ? '- [x]' : '- [ ]';
@@ -93,11 +88,9 @@ function serialiseCards(cards: Card[]): string {
 				lines.push(card.description);
 			}
 		}
-
-		// blank line between columns:
+		// blank line between columns for readability:
 		lines.push('');
 	}
-	// join into a single string
 	return lines.join('\n');
 }
 
@@ -132,124 +125,124 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			})
 
-		// configure webview options:
-		webviewPanel.webview.options = {
-			enableScripts: true,
-			localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
-		};
+			// configure webview options:
+			webviewPanel.webview.options = {
+				enableScripts: true,
+				localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
+			};
 
-		webviewPanel.onDidDispose(() => {
-			changeSubscription.dispose();
-		});
+			webviewPanel.onDidDispose(() => {
+				changeSubscription.dispose();
+			});
 
-		// build URIs (moved from "extra fluff" section)
-		// basically we're allowing ourselves to use script.js and style.css.
-		const sortableUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'Sortable.min.js'))
-		const scriptUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'script.js'))
-		const styleUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'style.css'))
+			// build URIs (moved from "extra fluff" section)
+			// basically we're allowing ourselves to use script.js and style.css.
+			const sortableUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'Sortable.min.js'))
+			const scriptUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'script.js'))
+			const styleUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'style.css'))
 
-		// path to board.html
-		const htmlPath = path.join(context.extensionPath, 'media', 'board.html');
+			// path to board.html
+			const htmlPath = path.join(context.extensionPath, 'media', 'board.html');
 
-		// read the HTML file into a string variable.
-		let html = fs.readFileSync(htmlPath, 'utf-8');
+			// read the HTML file into a string variable.
+			let html = fs.readFileSync(htmlPath, 'utf-8');
 
-		// replace the scriptUri placeholder in board.html to the REAL URI
-		html = html.replace('{{sortableUri}}', sortableUri.toString());
-		html = html.replace('{{scriptUri}}', scriptUri.toString());
+			// replace the scriptUri placeholder in board.html to the REAL URI
+			html = html.replace('{{sortableUri}}', sortableUri.toString());
+			html = html.replace('{{scriptUri}}', scriptUri.toString());
 
-		// do the same thing, but for the styleURI
-		html = html.replace('{{styleUri}}', styleUri.toString());
+			// do the same thing, but for the styleURI
+			html = html.replace('{{styleUri}}', styleUri.toString());
 
-		// assign the final, modified HTML to the webview:
-		webviewPanel.webview.html = html;
+			// assign the final, modified HTML to the webview:
+			webviewPanel.webview.html = html;
 
-		// handle messages from the webview:
-		webviewPanel.webview.onDidReceiveMessage(async (message) => {
+			// handle messages from the webview:
+			webviewPanel.webview.onDidReceiveMessage(async (message) => {
 
-			if (message.command == 'ready') {
-				const cards = parseMarkdown(document.getText());
-				webviewPanel.webview.postMessage({ command: 'init', cards });
+				if (message.command == 'ready') {
+					const cards = parseMarkdown(document.getText());
+					webviewPanel.webview.postMessage({ command: 'init', cards });
 
-			} else if (message.command === 'updateTitle') {
-				// parse current state:
-				const cards = parseMarkdown(document.getText());
+				} else if (message.command === 'updateTitle') {
+					// parse current state:
+					const cards = parseMarkdown(document.getText());
 
-				// find cards by ID and mutate its title:
-				const card = cards.find(c => c.id === message.id);
-				if (!card) return;
-				card.title = message.newTitle;
+					// find cards by ID and mutate its title:
+					const card = cards.find(c => c.id === message.id);
+					if (!card) return;
+					card.title = message.newTitle;
 
-				// serialise back to markdown:
-				const newText = serialiseCards(cards);
+					// serialise back to markdown:
+					const newText = serialiseCards(cards);
 
-				// apply as a workspace edit:
-				const edit = new vscode.WorkspaceEdit();
-				edit.replace(
-					document.uri,
-					new vscode.Range(0, 0, document.lineCount, 0),
-					newText
-				);
-				await vscode.workspace.applyEdit(edit);
+					// apply as a workspace edit:
+					const edit = new vscode.WorkspaceEdit();
+					edit.replace(
+						document.uri,
+						new vscode.Range(0, 0, document.lineCount, 0),
+						newText
+					);
+					await vscode.workspace.applyEdit(edit);
 
-			} else if (message.command === 'reorderBoard') {
-				// parse current state:
-				const oldCards = parseMarkdown(document.getText());
+				} else if (message.command === 'reorderBoard') {
+					// parse current state:
+					const oldCards = parseMarkdown(document.getText());
 
-				// build a lookup by id:
-				const cardLookup = new Map<number, Card>();
-				for (const card of oldCards) {
-					cardLookup.set(card.id, card);
-				}
-
-				// rebuild cards in new order:
-				const newCards: Card[] = [];
-				for (const column of message.columns) {
-					for (const cardId of column.cardIds) {
-						const card = cardLookup.get(cardId);
-						if (!card) continue;
-						card.column = column.name;
-						newCards.push(card);
+					// build a lookup by id:
+					const cardLookup = new Map<number, Card>();
+					for (const card of oldCards) {
+						cardLookup.set(card.id, card);
 					}
+
+					// rebuild cards in new order:
+					const newCards: Card[] = [];
+					for (const column of message.columns) {
+						for (const cardId of column.cardIds) {
+							const card = cardLookup.get(cardId);
+							if (!card) continue;
+							card.column = column.name;
+							newCards.push(card);
+						}
+					}
+					// serialise + apply as a workspace edit
+					const newText = serialiseCards(newCards);
+					const edit = new vscode.WorkspaceEdit();
+					edit.replace(
+						document.uri,
+						new vscode.Range(0, 0, document.lineCount, 0),
+						newText
+					);
+					await vscode.workspace.applyEdit(edit);
 				}
-				// serialise + apply as a workspace edit
-				const newText = serialiseCards(newCards);
-				const edit = new vscode.WorkspaceEdit();
-				edit.replace(
-					document.uri,
-					new vscode.Range(0, 0, document.lineCount, 0),
-					newText
-				);
-				await vscode.workspace.applyEdit(edit);
-			}
-		});
-	}
-};
-// register editor:
-const editorRegistration = vscode.window.registerCustomEditorProvider(
-	'kanbanBoard.editor', // must match with the viewType in package.json
-	kanbanProvider
-);
-context.subscriptions.push(editorRegistration);
+			});
+		}
+	};
+	// register editor:
+	const editorRegistration = vscode.window.registerCustomEditorProvider(
+		'kanbanBoard.editor', // must match with the viewType in package.json
+		kanbanProvider
+	);
+	context.subscriptions.push(editorRegistration);
 
-const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard', () => {
-	// find the workspace
-	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-	// ? is optional chaining. doesn't crash if workspace folders is undefined.
-	if (!workspaceFolder) {
-		vscode.window.showErrorMessage("Please open a folder to use the Kanban Board!");
-		return;
-	}
+	const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard', () => {
+		// find the workspace
+		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+		// ? is optional chaining. doesn't crash if workspace folders is undefined.
+		if (!workspaceFolder) {
+			vscode.window.showErrorMessage("Please open a folder to use the Kanban Board!");
+			return;
+		}
 
-	// set todo.md file path:
-	const todoPath = path.join(workspaceFolder.uri.fsPath, 'todo.md');
-	const todoExists = fs.existsSync(todoPath)
-	// check if todo.md exists:
-	if (todoExists) {
-		// then continue
-	} else if (!todoExists) {
-		// First time! Create an empty todo file w/kanban template:
-		const starterContent = `# Todo
+		// set todo.md file path:
+		const todoPath = path.join(workspaceFolder.uri.fsPath, 'todo.md');
+		const todoExists = fs.existsSync(todoPath)
+		// check if todo.md exists:
+		if (todoExists) {
+			// then continue
+		} else if (!todoExists) {
+			// First time! Create an empty todo file w/kanban template:
+			const starterContent = `# Todo
 - [ ] Add your todos here
 			
 # Doing
@@ -258,16 +251,16 @@ const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard'
 # Done
 - [x] Stuff you've finished!
 			`;
-		fs.writeFileSync(todoPath, starterContent, 'utf-8');
-	}
-	// open it with the custon editor!
-	const todoUri = vscode.Uri.file(todoPath);
-	vscode.commands.executeCommand('vscode.openWith', todoUri, 'kanbanBoard.editor');
+			fs.writeFileSync(todoPath, starterContent, 'utf-8');
+		}
+		// open it with the custon editor!
+		const todoUri = vscode.Uri.file(todoPath);
+		vscode.commands.executeCommand('vscode.openWith', todoUri, 'kanbanBoard.editor');
 
-});
+	});
 
-// when extension stops, clean things up (deregister the command from the command pallette, free internal handles, ect)
-context.subscriptions.push(boardDisposable);
+	// when extension stops, clean things up (deregister the command from the command pallette, free internal handles, ect)
+	context.subscriptions.push(boardDisposable);
 
 }
 
