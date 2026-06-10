@@ -120,8 +120,8 @@ export function activate(context: vscode.ExtensionContext) {
 		resolveCustomTextEditor(document, webviewPanel, token) {
 			const changeSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
 				if (e.document.uri.toString() === document.uri.toString()) {
-					const cards = parseMarkdown(document.getText());
-					webviewPanel.webview.postMessage({ command: 'init', cards });
+					const { cards, columns } = parseMarkdown(document.getText());
+					webviewPanel.webview.postMessage({ command: 'init', cards, columns });
 				}
 			})
 
@@ -161,12 +161,12 @@ export function activate(context: vscode.ExtensionContext) {
 			webviewPanel.webview.onDidReceiveMessage(async (message) => {
 
 				if (message.command == 'ready') {
-					const cards = parseMarkdown(document.getText());
-					webviewPanel.webview.postMessage({ command: 'init', cards });
+					const { cards, columns } = parseMarkdown(document.getText());
+					webviewPanel.webview.postMessage({ command: 'init', cards, columns });
 
 				} else if (message.command === 'updateTitle') {
 					// parse current state:
-					const cards = parseMarkdown(document.getText());
+					const {cards, columns} = parseMarkdown(document.getText());
 
 					// find cards by ID and mutate its title:
 					const card = cards.find(c => c.id === message.id);
@@ -174,7 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
 					card.title = message.newTitle;
 
 					// serialise back to markdown:
-					const newText = serialiseCards(cards);
+					const newText = serialiseCards(cards, columns);
 
 					// apply as a workspace edit:
 					const edit = new vscode.WorkspaceEdit();
@@ -187,7 +187,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 				} else if (message.command === 'reorderBoard') {
 					// parse current state:
-					const oldCards = parseMarkdown(document.getText());
+					const { cards: oldCards } = parseMarkdown(document.getText());
 
 					// build a lookup by id:
 					const cardLookup = new Map<number, Card>();
@@ -205,8 +205,10 @@ export function activate(context: vscode.ExtensionContext) {
 							newCards.push(card);
 						}
 					}
+					// pull column names from the webview's payload, in the order it sent them in:
+					const newColumns = message.columns.map((c: {name: string}) => c.name);
 					// serialise + apply as a workspace edit
-					const newText = serialiseCards(newCards);
+					const newText = serialiseCards(newCards, newColumns);
 					const edit = new vscode.WorkspaceEdit();
 					edit.replace(
 						document.uri,

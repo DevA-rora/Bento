@@ -1,11 +1,13 @@
-# Todo
-- [ ] get this shit done.
+# Done
+- [x] Fix linter errors
+- [x] Write journal entry w/dragging + editing.
 
 # Doing
-- [ ] I was doing this task lol
+- [ ] Fix duplication bug where dragging to a new column causes duplication.
 
-# Done
-- [x] this is a task!
-- [x] this is another task
-this is the description for the task!
-- [x] all these tasks are done!
+# Todo
+- [ ] Bug fixes (get ready for shipping)
+- [ ] Add checkcircle to mark todos as completed/not completed.
+
+# Ship:
+- [ ] add shipping todos here...
