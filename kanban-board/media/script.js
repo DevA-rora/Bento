@@ -1,8 +1,27 @@
 // acquire the VSCode API:
 const vscode = acquireVsCodeApi();
 
+function notifyReorder() {
+    const columns = [];
+    document.querySelectorAll('.card-list').forEach((listEl) => {
+        const name = listEl.dataset.column;
+        const cardIds = [];
+        listEl.querySelectorAll('.card').forEach((cardEl) => {
+            cardIds.push(Number(cardEl.dataset.cardId));
+        });
+        columns.push({ name: name, cardIds: cardIds });
+    });
+    vscode.postMessage({ command: 'reorderBoard', columns: columns });
+}
+
 function renderCards(cards) {
     const boardEl = document.querySelector('.board'); // this
+
+    new Sortable(boardEl, {
+        animation: 150,
+        handle: 'h2',
+        onEnd: notifyReorder,
+    });
 
     // clear board:
     boardEl.innerHTML = '';
@@ -105,7 +124,7 @@ function renderCards(cards) {
         new Sortable(listEl, {
             group: 'cards',
             animation: 150,
-            onEnd: () => {
+            onEnd: notifyReorder => {
                 // walk the DOM and build the new ordering
                 const columns = [];
                 document.querySelectorAll('.card-list').forEach((listEl) => {
