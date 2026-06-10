@@ -70,15 +70,9 @@ function renderCards(cards) {
             }
         });
 
-        document.querySelectorAll('.card-list').forEach((listEl) => {
-            new Sortable(listEl, {
-                group: 'cards',
-                animation: 150,
-            });
-        });
-
+        
         cardEl.appendChild(titleEl);
-
+        
         // build description element only if it exists
         // put it inside the card:
         if (card.description) {
@@ -86,12 +80,31 @@ function renderCards(cards) {
             descEl.textContent = card.description;
             cardEl.appendChild(descEl);
         }
-
         
-
         // find the right column and put the entire card in it:
         const listEl = document.getElementById('cardlist-' + card.column);
         listEl.appendChild(cardEl)
+    });
+
+    document.querySelectorAll('.card-list').forEach((listEl) => {
+        new Sortable(listEl, {
+            group: 'cards',
+            animation: 150,
+            onEnd: () => {
+                // walk the DOM and build the new ordering
+                const columns = [];
+                document.querySelectorAll('.card-list').forEach((listEl) => {
+                    const name = listEl.dataset.column;
+                    const cardIds = [];
+                    listEl.querySelectorAll('.card').forEach((cardEl) => {
+                        cardIds.push(Number(cardEl.dataset.cardId));
+                    });
+                    columns.push({ name: name, cardIds: cardIds });
+                });
+                vscode.postMessage({ command: 'reorderBoard', columns: columns });
+                // send it to the extension
+            }
+        });
     });
 }
 

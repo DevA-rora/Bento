@@ -166,9 +166,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// handle messages from the webview:
 		webviewPanel.webview.onDidReceiveMessage(async (message) => {
+
 			if (message.command == 'ready') {
 				const cards = parseMarkdown(document.getText());
 				webviewPanel.webview.postMessage({ command: 'init', cards });
+
 			} else if (message.command === 'updateTitle') {
 				// parse current state:
 				const cards = parseMarkdown(document.getText());
@@ -182,6 +184,36 @@ export function activate(context: vscode.ExtensionContext) {
 				const newText = serialiseCards(cards);
 
 				// apply as a workspace edit:
+				const edit = new vscode.WorkspaceEdit();
+				edit.replace(
+					document.uri,
+					new vscode.Range(0, 0, document.lineCount, 0),
+					newText
+				);
+				await vscode.workspace.applyEdit(edit);
+
+			} else if (message.command === 'reorderBoard') {
+				// parse current state:
+				const oldCards = parseMarkdown(document.getText());
+
+				// build a lookup by id:
+				const cardLookup = new Map<number, Card>();
+				for (const card of oldCards) {
+					cardLookup.set(card.id, card);
+				}
+
+				// rebuild cards in new order:
+				const newCards: Card[] = [];
+				for (const column of message.columns) {
+					for (const cardId of column.cardIds) {
+						const card = cardLookup.get(cardId);
+						if (!card) continue;
+						card.column = column.name;
+						newCards.push(card);
+					}
+				}
+				// serialise + apply as a workspace edit
+				const newText = serialiseCards(newCards);
 				const edit = new vscode.WorkspaceEdit();
 				edit.replace(
 					document.uri,
