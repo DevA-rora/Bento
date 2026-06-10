@@ -64,13 +64,21 @@ function renderCards(cards, columns) {
             cardEl.classList.add('completed');
         }
 
+        // circle button
+        const checkEl = document.createElement('button');
+        checkEl.className = 'check-circle';
+        checkEl.type = 'button'; // prevents form submission weirdness
+
+        // content wrapper for title + description
+        const contentEl = document.createElement('div');
+        contentEl.className = 'card-content';
+
         // build title element and put it inside the card:
         const titleEl = document.createElement('h3');
         titleEl.textContent = card.title;
 
         // default to view mode (edit requires dlbclick)
         titleEl.contentEditable = 'false';
-
 
         // opposite of focus, when the user clicks away.
         titleEl.addEventListener('blur', () => {
@@ -84,9 +92,6 @@ function renderCards(cards, columns) {
             }
         });
 
-
-        cardEl.appendChild(titleEl);
-
         // description element always created & always shown,
         // so there's something to double click, even on empty cards:
         const descEl = document.createElement('p');
@@ -94,7 +99,12 @@ function renderCards(cards, columns) {
         descEl.textContent = card.description || ''; // empty string when none
         descEl.contentEditable = 'false'; // view mode by default
 
-        cardEl.appendChild(descEl);
+        // append content + child:
+        contentEl.appendChild(titleEl);
+        contentEl.appendChild(descEl);
+
+        cardEl.appendChild(checkEl);
+        cardEl.appendChild(contentEl);
 
         // when the user clicks a card twice, activate edit mode.
         titleEl.addEventListener('dblclick', () => {
@@ -123,6 +133,13 @@ function renderCards(cards, columns) {
                 titleEl.blur();
             }
         });
+
+        checkEl.addEventListener('click', () => {
+            vscode.postMessage({
+                command: 'toggleComplete',
+                id: card.id
+            })
+        })
 
         // find the right column and put the entire card in it:
         const listEl = document.getElementById('cardlist-' + card.column);

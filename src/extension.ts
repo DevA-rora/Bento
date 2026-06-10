@@ -214,76 +214,96 @@ export function activate(context: vscode.ExtensionContext) {
 					} finally {
 						isApplyingEdit = false;
 					}
-				} else if(message.command === 'reorderBoard') {
+
+				} else if (message.command === 'reorderBoard') {
 					console.log('[reorderBoard] message.columns:', JSON.stringify(message.columns));
 
-	// parse current state:
-	const { cards: oldCards } = parseMarkdown(document.getText());
-	console.log('[reorderBoard] oldCards count:', oldCards.length, 'ids:', oldCards.map(c => c.id));
+					// parse current state:
+					const { cards: oldCards } = parseMarkdown(document.getText());
+					console.log('[reorderBoard] oldCards count:', oldCards.length, 'ids:', oldCards.map(c => c.id));
 
-	// build a lookup by id:
-	const cardLookup = new Map<number, Card>();
-	for (const card of oldCards) {
-		cardLookup.set(card.id, card);
-	}
+					// build a lookup by id:
+					const cardLookup = new Map<number, Card>();
+					for (const card of oldCards) {
+						cardLookup.set(card.id, card);
+					}
 
-	// rebuild cards in new order:
-	const newCards: Card[] = [];
-	for (const column of message.columns) {
-		for (const cardId of column.cardIds) {
-			const card = cardLookup.get(cardId);
-			if (!card) continue;
-			card.column = column.name;
-			newCards.push(card);
-		}
-	}
-	// pull column names from the webview's payload, in the order it sent them in:
-	const newColumns = message.columns.map((c: { name: string }) => c.name);
-	console.log('[reorderBoard] newCards count:', newCards.length, 'ids:', newCards.map(c => c.id));
-	// serialise + apply as a workspace edit
-	const newText = serialiseCards(newCards, newColumns);
-	console.log('[reorderBoard] newText:\n' + newText);
-	const edit = new vscode.WorkspaceEdit();
-	edit.replace(
-		document.uri,
-		new vscode.Range(0, 0, document.lineCount, 0),
-		newText
-	);
-	isApplyingEdit = true;
-	try {
-		await vscode.workspace.applyEdit(edit);
-	} finally {
-		isApplyingEdit = false;
-	}
-}
+					// rebuild cards in new order:
+					const newCards: Card[] = [];
+					for (const column of message.columns) {
+						for (const cardId of column.cardIds) {
+							const card = cardLookup.get(cardId);
+							if (!card) continue;
+							card.column = column.name;
+							newCards.push(card);
+						}
+					}
+					// pull column names from the webview's payload, in the order it sent them in:
+					const newColumns = message.columns.map((c: { name: string }) => c.name);
+					console.log('[reorderBoard] newCards count:', newCards.length, 'ids:', newCards.map(c => c.id));
+					// serialise + apply as a workspace edit
+					const newText = serialiseCards(newCards, newColumns);
+					console.log('[reorderBoard] newText:\n' + newText);
+					const edit = new vscode.WorkspaceEdit();
+					edit.replace(
+						document.uri,
+						new vscode.Range(0, 0, document.lineCount, 0),
+						newText
+					);
+					isApplyingEdit = true;
+					try {
+						await vscode.workspace.applyEdit(edit);
+					} finally {
+						isApplyingEdit = false;
+					}
+
+				} else if (message.command === 'toggleComplete') {
+					const { cards, columns } = parseMarkdown(document.getText());
+					const card = cards.find(c => c.id === message.id);
+					if (!card) return;
+					card.completed = !card.completed; // flip
+					const newText = serialiseCards(cards, columns);
+					const edit = new vscode.WorkspaceEdit();
+					edit.replace(
+						document.uri,
+						new vscode.Range(0, 0, document.lineCount, 0),
+						newText
+					);
+					isApplyingEdit = true;
+					try {
+						await vscode.workspace.applyEdit(edit);
+					} finally {
+						isApplyingEdit = false;
+					}
+				}
 			});
 		}
 	};
-// register editor:
-const editorRegistration = vscode.window.registerCustomEditorProvider(
-	'kanbanBoard.editor', // must match with the viewType in package.json
-	kanbanProvider
-);
-context.subscriptions.push(editorRegistration);
+	// register editor:
+	const editorRegistration = vscode.window.registerCustomEditorProvider(
+		'kanbanBoard.editor', // must match with the viewType in package.json
+		kanbanProvider
+	);
+	context.subscriptions.push(editorRegistration);
 
-const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard', () => {
-	// find the workspace
-	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-	// ? is optional chaining. doesn't crash if workspace folders is undefined.
-	if (!workspaceFolder) {
-		vscode.window.showErrorMessage("Please open a folder to use the Kanban Board!");
-		return;
-	}
+	const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard', () => {
+		// find the workspace
+		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+		// ? is optional chaining. doesn't crash if workspace folders is undefined.
+		if (!workspaceFolder) {
+			vscode.window.showErrorMessage("Please open a folder to use the Kanban Board!");
+			return;
+		}
 
-	// set todo.md file path:
-	const todoPath = path.join(workspaceFolder.uri.fsPath, 'todo.md');
-	const todoExists = fs.existsSync(todoPath)
-	// check if todo.md exists:
-	if (todoExists) {
-		// then continue
-	} else if (!todoExists) {
-		// First time! Create an empty todo file w/kanban template:
-		const starterContent = `# Todo
+		// set todo.md file path:
+		const todoPath = path.join(workspaceFolder.uri.fsPath, 'todo.md');
+		const todoExists = fs.existsSync(todoPath)
+		// check if todo.md exists:
+		if (todoExists) {
+			// then continue
+		} else if (!todoExists) {
+			// First time! Create an empty todo file w/kanban template:
+			const starterContent = `# Todo
 - [ ] Add your todos here
 			
 # Doing
@@ -292,16 +312,16 @@ const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard'
 # Done
 - [x] Stuff you've finished!
 			`;
-		fs.writeFileSync(todoPath, starterContent, 'utf-8');
-	}
-	// open it with the custon editor!
-	const todoUri = vscode.Uri.file(todoPath);
-	vscode.commands.executeCommand('vscode.openWith', todoUri, 'kanbanBoard.editor');
+			fs.writeFileSync(todoPath, starterContent, 'utf-8');
+		}
+		// open it with the custon editor!
+		const todoUri = vscode.Uri.file(todoPath);
+		vscode.commands.executeCommand('vscode.openWith', todoUri, 'kanbanBoard.editor');
 
-});
+	});
 
-// when extension stops, clean things up (deregister the command from the command pallette, free internal handles, ect)
-context.subscriptions.push(boardDisposable);
+	// when extension stops, clean things up (deregister the command from the command pallette, free internal handles, ect)
+	context.subscriptions.push(boardDisposable);
 
 }
 

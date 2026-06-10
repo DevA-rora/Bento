@@ -25,7 +25,53 @@
     border-radius: 6px;
     padding: 8px 12px;
     margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
 }
+
+.card-content {
+    /* takes remaining space */
+    flex: 1;
+    /* lets long words wrap instead of overflowing */
+    min-width: 0;
+}
+
+/* check circle styling */
+.check-circle {
+    width: 18px;
+    height: 18px;
+    /* turn the circle into a circle */
+    border-radius: 50%;
+    border: 1.5px solid #888;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    /* dont' squish when text is long */
+    flex-shrink: 0;
+    /* visually align with title */
+    margin-top: 6px;
+}
+
+/* check circle onHover styling */
+.check-circle:hover {
+    border-color: #bbb;
+    background: rgba(225, 225, 225, 0.05);
+}
+
+.card.completed .check-circle {
+    background: #888;
+    border-color: #888;
+}
+
+.card.completed .check-circle::after {
+    content: '✓';
+    color: #1e1e1e;
+    font-size: 12px;
+    line-height: 1;
+    display: block;
+}
+
 
 .card h3[contenteditable="true"]:focus {
     outline: 2px solid #007acc;
