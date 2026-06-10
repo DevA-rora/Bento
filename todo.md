@@ -6,6 +6,8 @@
 - [ ] Fix duplication bug where dragging to a new column causes duplication.
 
 # Todo
+- [ ] Add ability to edit the description too!
+- [ ] Render columns even when there are no tasks in them. 
 - [ ] Bug fixes (get ready for shipping)
 - [ ] Add checkcircle to mark todos as completed/not completed.
 

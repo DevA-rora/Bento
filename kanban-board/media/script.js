@@ -14,30 +14,14 @@ function notifyReorder() {
     vscode.postMessage({ command: 'reorderBoard', columns: columns });
 }
 
-function renderCards(cards) {
+function renderCards(cards, columns) {
     const boardEl = document.querySelector('.board'); // this
-
-    new Sortable(boardEl, {
-        animation: 150,
-        handle: 'h2',
-        onEnd: notifyReorder,
-    });
 
     // clear board:
     boardEl.innerHTML = '';
 
-    // find unique column names --> Create a column div for each:
-    const seenColumns = [];
-    // for each card
-    cards.forEach((card) => {
-        // if the array DOES NOT include the card:
-        if (!seenColumns.includes(card.column)) {
-            seenColumns.push(card.column); // append to array.
-        }
-    });
-
     // create column div + headings for each:
-    seenColumns.forEach((columnId) =>  {
+    columns.forEach((columnId) => {
         const colEl = document.createElement('div');
         const listEl = document.createElement('div');
 
@@ -47,7 +31,7 @@ function renderCards(cards) {
         listEl.className = 'card-list';
         listEl.id = 'cardlist-' + columnId;
         listEl.dataset.column = columnId;
-        
+
         const headingEl = document.createElement('h2');
         // captialise columns:
         headingEl.textContent = columnId.charAt(0).toUpperCase() + columnId.slice(1);
@@ -104,9 +88,9 @@ function renderCards(cards) {
             }
         });
 
-        
+
         cardEl.appendChild(titleEl);
-        
+
         // build description element only if it exists
         // put it inside the card:
         if (card.description) {
@@ -114,7 +98,7 @@ function renderCards(cards) {
             descEl.textContent = card.description;
             cardEl.appendChild(descEl);
         }
-        
+
         // find the right column and put the entire card in it:
         const listEl = document.getElementById('cardlist-' + card.column);
         listEl.appendChild(cardEl)
@@ -124,21 +108,15 @@ function renderCards(cards) {
         new Sortable(listEl, {
             group: 'cards',
             animation: 150,
-            onEnd: notifyReorder => {
-                // walk the DOM and build the new ordering
-                const columns = [];
-                document.querySelectorAll('.card-list').forEach((listEl) => {
-                    const name = listEl.dataset.column;
-                    const cardIds = [];
-                    listEl.querySelectorAll('.card').forEach((cardEl) => {
-                        cardIds.push(Number(cardEl.dataset.cardId));
-                    });
-                    columns.push({ name: name, cardIds: cardIds });
-                });
-                vscode.postMessage({ command: 'reorderBoard', columns: columns });
-                // send it to the extension
-            }
+            onEnd: notifyReorder, 
         });
+    });
+
+    // sortable on the board (for column dragging)
+    new Sortable(boardEl, {
+        animation: 150,
+        handle: 'h2',
+        onEnd: notifyReorder,
     });
 }
 
@@ -146,7 +124,7 @@ function renderCards(cards) {
 window.addEventListener('message', (event) => {
     const message = event.data;
     if (message.command == 'init') {
-        renderCards(message.cards)
+        renderCards(message.cards, message.columns)
         console.log('Got cards:', message.cards);
     }
 });
