@@ -144,6 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// build URIs (moved from "extra fluff" section)
 		// basically we're allowing ourselves to use script.js and style.css.
+		const sortableUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'Sortable.min.js'))
 		const scriptUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'script.js'))
 		const styleUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'style.css'))
 
@@ -154,6 +155,7 @@ export function activate(context: vscode.ExtensionContext) {
 		let html = fs.readFileSync(htmlPath, 'utf-8');
 
 		// replace the scriptUri placeholder in board.html to the REAL URI
+		html = html.replace('{{sortableUri}}', sortableUri.toString());
 		html = html.replace('{{scriptUri}}', scriptUri.toString());
 
 		// do the same thing, but for the styleURI

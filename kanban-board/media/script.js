@@ -20,13 +20,21 @@ function renderCards(cards) {
     // create column div + headings for each:
     seenColumns.forEach((columnId) =>  {
         const colEl = document.createElement('div');
+        const listEl = document.createElement('div');
+
         colEl.className = 'column';
         colEl.id = 'column-' + columnId;
 
+        listEl.className = 'card-list';
+        listEl.id = 'cardlist-' + columnId;
+        listEl.dataset.column = columnId;
+        
         const headingEl = document.createElement('h2');
         // captialise columns:
         headingEl.textContent = columnId.charAt(0).toUpperCase() + columnId.slice(1);
+        // append heading & list.
         colEl.appendChild(headingEl);
+        colEl.appendChild(listEl);
 
         boardEl.appendChild(colEl);
     });
@@ -35,6 +43,9 @@ function renderCards(cards) {
     cards.forEach((card) => {
         // card container
         const cardEl = document.createElement('div');
+
+        // data card id is being set on cardEl.
+        cardEl.dataset.cardId = card.id;
 
         // differentiate between completed and uncompleted tasks.
         cardEl.className = 'card';
@@ -59,6 +70,13 @@ function renderCards(cards) {
             }
         });
 
+        document.querySelectorAll('.card-list').forEach((listEl) => {
+            new Sortable(listEl, {
+                group: 'cards',
+                animation: 150,
+            });
+        });
+
         cardEl.appendChild(titleEl);
 
         // build description element only if it exists
@@ -72,8 +90,8 @@ function renderCards(cards) {
         
 
         // find the right column and put the entire card in it:
-        const columnEl = document.getElementById('column-' + card.column);
-        columnEl.appendChild(cardEl)
+        const listEl = document.getElementById('cardlist-' + card.column);
+        listEl.appendChild(cardEl)
     });
 }
 
