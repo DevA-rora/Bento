@@ -6,13 +6,14 @@
 - [x] Add ability to edit the description too!
 - [x] Render columns even when there are no tasks in them. 
 - [x] Add checkcircle to mark todos as completed/not completed.
+- [x] Optimise animation so it marks cards as completed faster.
 
 # Doing
 - [ ] Fix alignment of circle to be inline with the text
 
 # Todo
-- [ ] Optimise animation so it marks cards as completed faster.
-- [ ] Add ability to add & delete cards.
+- [ ] Add event listener on enter down to stop editing description (same pattern as editing title)
+- [ ] Add ability to add & delete cards (onRightClick)
 - [ ] Make dragging cards much easier (especially when dragging to new columns)
 - [ ] Bug fixes (get ready for shipping)
 - [ ] Add comments + documentation where required.

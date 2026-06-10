@@ -135,6 +135,9 @@ function renderCards(cards, columns) {
         });
 
         checkEl.addEventListener('click', () => {
+            // flip visual state instantly, to give the "illusion" that the WebView is actually fast:
+            cardEl.classList.toggle('completed');
+
             vscode.postMessage({
                 command: 'toggleComplete',
                 id: card.id

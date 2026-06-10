@@ -72,6 +72,11 @@
     display: block;
 }
 
+.card h3,
+.card p {
+    /* should remove top padding, so the checkCircle should now be inline with text (fingers crossed 🤞) */
+    margin: 0;
+}
 
 .card h3[contenteditable="true"]:focus {
     outline: 2px solid #007acc;
