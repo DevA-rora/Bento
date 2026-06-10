@@ -69,10 +69,6 @@ function renderCards(cards, columns) {
         checkEl.className = 'check-circle';
         checkEl.type = 'button'; // prevents form submission weirdness
 
-        // content wrapper for title + description
-        const contentEl = document.createElement('div');
-        contentEl.className = 'card-content';
-
         // build title element and put it inside the card:
         const titleEl = document.createElement('h3');
         titleEl.textContent = card.title;
@@ -99,12 +95,15 @@ function renderCards(cards, columns) {
         descEl.textContent = card.description || ''; // empty string when none
         descEl.contentEditable = 'false'; // view mode by default
 
-        // append content + child:
-        contentEl.appendChild(titleEl);
-        contentEl.appendChild(descEl);
+        // title row: circle + title are side by side:
+        const titleRow = document.createElement('div');
+        titleRow.className = 'title-row';
+        titleRow.appendChild(checkEl);
+        titleRow.append(titleEl);
 
-        cardEl.appendChild(checkEl);
-        cardEl.appendChild(contentEl);
+        // assemble the card: titleRow on top, description below:
+        cardEl.appendChild(titleRow);
+        cardEl.appendChild(descEl);
 
         // when the user clicks a card twice, activate edit mode.
         titleEl.addEventListener('dblclick', () => {
