@@ -32,3 +32,9 @@
     outline-offset: 2px;
     border-radius: 2px;
 }
+
+/* changes the cursor when hovering over the title */
+/* the h3 means when I click on the 'h3' part of the card, or the text. */
+.card h3 {
+    cursor: text;
+}

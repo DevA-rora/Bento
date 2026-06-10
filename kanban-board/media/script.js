@@ -57,8 +57,23 @@ function renderCards(cards) {
         const titleEl = document.createElement('h3');
         titleEl.textContent = card.title;
 
-        // make it editable:
-        titleEl.contentEditable = 'true';
+        // default to view mode (edit requires dlbclick)
+        titleEl.contentEditable = 'false';
+
+        // when the user clicks a card twice, activate edit mode.
+        titleEl.addEventListener('dblclick', () => {
+            titleEl.contentEditable = 'true'; // lets you edit text
+            titleEl.focus(); // means the element is now recieving keyboard input.
+        });
+
+        titleEl.addEventListener('keydown', (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                titleEl.blur();
+            }
+        });
+
+        // opposite of focus, when the user clicks away.
         titleEl.addEventListener('blur', () => {
             const newTitle = titleEl.textContent.trim();
             if (newTitle !== card.title) {
