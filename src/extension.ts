@@ -308,6 +308,47 @@ export function activate(context: vscode.ExtensionContext) {
 						columns: newColumns,
 						focusNewInColumn: message.column
 					});
+
+				// render add column button.
+				} else if (message.command === 'addColumn') {
+					// ask the user for a name
+					const name = await vscode.window.showInputBox({
+						prompt: 'Column name',
+						placeHolder: 'e.g. Backlog'
+					});
+					if (!name) return; // the user pressed escape
+
+					const {cards, columns} = parseMarkdown(document.getText());
+
+					// avoid duplicates
+					const normalised = name.trim().toLowerCase();
+					if (columns.includes(normalised)) {
+						vscode.window.showWarningMessage(`Column "${name}" already exists`);
+						return;
+					}
+					columns.push(normalised);
+
+					const newText = serialiseCards(cards, columns);
+					const edit = new vscode.WorkspaceEdit();
+					edit.replace(
+						document.uri,
+						new vscode.Range(0, 0, document.lineCount, 0),
+						newText
+					);
+					isApplyingEdit = true;
+					try {
+						await vscode.workspace.applyEdit(edit);
+					} finally {
+						isApplyingEdit = false;
+					}
+
+					// manually trigger re-render so that the new column appears in WebView:
+					const {cards: refreshedCards, columns: refreshedColumns } = parseMarkdown(document.getText());
+					webviewPanel.webview.postMessage({
+						command: 'init',
+						cards: refreshedCards,
+						columns: refreshedColumns
+					});
 				}
 			});
 		}

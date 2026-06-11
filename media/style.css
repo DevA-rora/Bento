@@ -62,6 +62,25 @@
     min-width: 0;
 }
 
+.add-column {
+    flex: 1;
+    min-width: 0;
+    align-self: flex-start;
+    background: transparent;
+    border: 1px dashed #555;
+    color: #888;
+    cursor: pointer;
+    padding: 12px;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.add-column:hover {
+    border-color: #888;
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.03);
+}
+
 /* check circle styling */
 .check-circle {
     width: 18px;
