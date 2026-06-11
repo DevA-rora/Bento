@@ -63,14 +63,21 @@
 }
 
 .add-column {
-    flex: 1;
+    /* half the width of a real todo column */
+    flex: 0.5;
     min-width: 0;
     align-self: flex-start;
     background: transparent;
-    border: 1px dashed #555;
+    /* change border to be dotted instead of dashed */
+    border: 1px dashed #666;
+    /* add rounded corners */
+    border-radius: 8px;
     color: #888;
     cursor: pointer;
-    padding: 12px;
+    /* make padding tighter */
+    padding: 8px 12px;
+    /* nudge down to align with column headings */
+    margin-top: 6px;
     font-size: inherit;
     font-family: inherit;
 }

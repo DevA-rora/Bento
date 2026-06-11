@@ -62,18 +62,18 @@ function renderCards(cards, columns) {
         });
         colEl.appendChild(addBtn);
 
-        // create button for making new columns at the end of the board:
-        const addColBtn = document.createElement('button');
-        addColBtn.className = 'add-column';
-        addColBtn.type = 'button';
-        addColBtn.textContent = '+ Add Column';
-        addColBtn.addEventListener('click', () => {
-            vscode.postMessage({ command: 'addColumn' });
-        });
-        boardEl.appendChild(addColBtn);
 
     });
 
+    // create button for making new columns at the end of the board:
+    const addColBtn = document.createElement('button');
+    addColBtn.className = 'add-column';
+    addColBtn.type = 'button';
+    addColBtn.textContent = '+ Add Column';
+    addColBtn.addEventListener('click', () => {
+        vscode.postMessage({ command: 'addColumn' });
+    });
+    boardEl.appendChild(addColBtn);
 
 
     // card-creating code. Renders cards into the columns we just made.
