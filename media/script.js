@@ -183,8 +183,20 @@ function renderCards(cards, columns) {
 window.addEventListener('message', (event) => {
     const message = event.data;
     if (message.command == 'init') {
+
+        // skip re-render while user is editing their card (otherwise autosave event wipes typing)
+        const activeEl = document.activeElement;
+        const isCurrentlyEditing = activeEl && activeEl.getAttribute('contenteditable') === 'true';
+        if (isCurrentlyEditing && !message.focusNewInColumn) {
+            console.log('[init] skipping re-render (the user is editing!)')
+            return;
+        }
+
+        // print basic info about columns & cards:
         console.log('[init] columns:', JSON.stringify(message.columns), 'cardCount:', message.cards.length);
         console.log('[init] cards:', JSON.stringify(message.cards));
+
+        // render the cards on WebView
         renderCards(message.cards, message.columns);
 
         // if the extension told us to auto-edit a new card, then do it now:

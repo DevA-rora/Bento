@@ -107,6 +107,12 @@
     border-radius: 2px;
 }
 
+/* style the card if  it contains a focused editable h3 */
+.card:has(h3[contenteditable="true"]:focus) {
+    background: #3a3a3a;
+    border-color: #007acc;
+}
+
 .card p.description[contenteditable="true"]:empty::before {
     content: 'Add a description...';
     opacity: 0.5;

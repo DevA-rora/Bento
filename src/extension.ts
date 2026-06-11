@@ -306,7 +306,7 @@ export function activate(context: vscode.ExtensionContext) {
 						command: 'init',
 						cards: newCards,
 						columns: newColumns,
-						focusNewInColumns: message.column
+						focusNewInColumn: message.column
 					});
 				}
 			});

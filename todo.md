@@ -8,12 +8,14 @@
 - [x] Add checkcircle to mark todos as completed/not completed.
 - [x] Optimise animation so it marks cards as completed faster.
 - [x] Fix alignment of circle to be inline with the text
+- [x] Add a small, grey card at the end of every column as a "make new card" button to make new cards (instead of going to markdown)
+- [x] Fix bug where card stops editing when user creates it (proaly cause of vscode autosave)
 
 # Doing
-- [ ] Add a small, grey card at the end of every column as a "make new card" button to make new cards (instead of going to markdown)
+- [ ] Add event listener on enter down to stop editing description (same pattern as editing title)
 
 # Todo
-- [ ] Add event listener on enter down to stop editing description (same pattern as editing title)
+- [ ] Add ability to make new colums (from the rightmost column)
 - [ ] Add ability to delete cards (onRightClick)
 - [ ] Make dragging cards much easier (especially when dragging to new columns, sortableJS fix)
 - [ ] Format all files to look nice.
