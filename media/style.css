@@ -12,6 +12,27 @@
     min-width: 0; /* allows column to shrink as required. (whatever that means) */
 }
 
+/* greyed out add card styling: */
+.add-card {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background: transparent;
+    border: 1px dashed #555;
+    border-radius: 6px;
+    color: #888;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.add-card:hover {
+    border-color: #888;
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.03);
+}
+
 /* card compelted styling: */
 .card.completed {
     opacity: 0.5; /* make entire card 50% transparent */

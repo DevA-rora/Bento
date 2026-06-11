@@ -48,7 +48,22 @@ function renderCards(cards, columns) {
         colEl.appendChild(listEl);
 
         boardEl.appendChild(colEl);
+
+        // create button for making new cards in the WebView:
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-card';
+        addBtn.type = 'button';
+        addBtn.textContent = "+ Add Card";
+        addBtn.addEventListener('click', () => {
+            vscode.postMessage({
+                command: 'addCard',
+                column: columnId
+            });
+        });
+        colEl.appendChild(addBtn);
     });
+
+
 
     // card-creating code. Renders cards into the columns we just made.
     cards.forEach((card) => {
@@ -171,6 +186,19 @@ window.addEventListener('message', (event) => {
         console.log('[init] columns:', JSON.stringify(message.columns), 'cardCount:', message.cards.length);
         console.log('[init] cards:', JSON.stringify(message.cards));
         renderCards(message.cards, message.columns);
+
+        // if the extension told us to auto-edit a new card, then do it now:
+        if (message.focusNewInColumn) {
+            const listEl = document.getElementById('cardlist-' + message.focusNewInColumn);
+            const lastCard = listEl.lastElementChild;
+            if (lastCard) {
+                const titleEl = lastCard.querySelector('h3');
+                const descEl = lastCard.querySelector('p.description');
+                titleEl.contentEditable = 'true';
+                titleEl.focus();
+                document.getSelection().selectAllChildren(titleEl); // preselects the new task.
+            }
+        }
     }
 });
 

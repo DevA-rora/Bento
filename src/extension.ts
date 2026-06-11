@@ -275,6 +275,39 @@ export function activate(context: vscode.ExtensionContext) {
 					} finally {
 						isApplyingEdit = false;
 					}
+				} else if (message.command === 'addCard') {
+					const { cards, columns } = parseMarkdown(document.getText());
+
+					const newCard: Card = {
+						id: Math.max(0, ...cards.map(c => c.id)) + 1,
+						title: "New Task",
+						column: message.column,
+						completed: false
+					};
+					cards.push(newCard);
+
+					const newText = serialiseCards(cards, columns);
+					const edit = new vscode.WorkspaceEdit();
+					edit.replace(
+						document.uri,
+						new vscode.Range(0, 0, document.lineCount, 0),
+						newText
+					);
+					isApplyingEdit = true;
+					try {
+						await vscode.workspace.applyEdit(edit);
+					} finally {
+						isApplyingEdit = false;
+					}
+
+					// rerender the webview to have the new card work:
+					const { cards: newCards, columns: newColumns } = parseMarkdown(document.getText());
+					webviewPanel.webview.postMessage({
+						command: 'init',
+						cards: newCards,
+						columns: newColumns,
+						focusNewInColumns: message.column
+					});
 				}
 			});
 		}

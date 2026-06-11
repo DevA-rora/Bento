@@ -7,16 +7,16 @@
 - [x] Render columns even when there are no tasks in them. 
 - [x] Add checkcircle to mark todos as completed/not completed.
 - [x] Optimise animation so it marks cards as completed faster.
+- [x] Fix alignment of circle to be inline with the text
 
 # Doing
-- [ ] Fix alignment of circle to be inline with the text
+- [ ] Add a small, grey card at the end of every column as a "make new card" button to make new cards (instead of going to markdown)
 
 # Todo
-- [ ] Add a small, grey card at the end of every column as a "make new card" button to make new cards (instead of going to markdown)
 - [ ] Add event listener on enter down to stop editing description (same pattern as editing title)
 - [ ] Add ability to delete cards (onRightClick)
 - [ ] Make dragging cards much easier (especially when dragging to new columns, sortableJS fix)
-
+- [ ] Format all files to look nice.
 - [ ] Stress Testing / Bug fixes (get ready for shipping)
 - [ ] Add comments + documentation where required.
 
