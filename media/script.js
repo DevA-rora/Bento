@@ -141,10 +141,19 @@ function renderCards(cards, columns) {
             }
         });
 
+        // when enter is clicked, "unfocus" the card.
         titleEl.addEventListener('keydown', (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 titleEl.blur();
+            }
+        });
+
+        // when enter is clicked, "unfocus" the card.
+        descEl.addEventListener('keydown', (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                descEl.blur();
             }
         });
 
