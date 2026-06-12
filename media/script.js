@@ -46,7 +46,7 @@ function showCardMenu(x, y, cardId, cardEl) {
             document.removeEventListener('keydown', escClose);
         };
         const escClose = (e) => { if (e.key === 'Escape') close() };
-        document.addEventListener('click', close());
+        document.addEventListener('click', close); // remove parentheses, this should fix the bug.
         document.addEventListener('keydown', escClose);
     }, 0);
 }
