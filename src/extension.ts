@@ -349,6 +349,25 @@ export function activate(context: vscode.ExtensionContext) {
 						cards: refreshedCards,
 						columns: refreshedColumns
 					});
+
+				} else if (message.command === 'deleteCard') {
+					const { cards, columns } = parseMarkdown(document.getText());
+					const filtered = cards.filter(c => c.id !== message.id);
+					if (filtered.length === cards.length) return; // not found, so we can just ignore.
+
+					const newText = serialiseCards(filtered, columns);
+					const edit = new vscode.WorkspaceEdit();
+					edit.replace(
+						document.uri,
+						new vscode.Range(0, 0, document.lineCount, 0),
+						newText
+					);
+					isApplyingEdit = true;
+					try {
+						await vscode.workspace.applyEdit(edit);
+					} finally {
+						isApplyingEdit = false;
+					}
 				}
 			});
 		}

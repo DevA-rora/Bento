@@ -88,6 +88,39 @@
     background: rgba(255, 255, 255, 0.03);
 }
 
+.context-menu {
+    /* coordinates relative to viewport: */
+    position: fixed;
+    min-width: 140px;
+    background: #252525;
+    border: 1px solid #454545;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    padding: 4px 0;
+    /* force context menu to be displayed above everything else */
+    z-index: 1000;
+}
+
+.context-menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 6px 14px;
+    background: transparent;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+
+}
+
+.context-menu-item:hover {
+    /* vscode selection blue colour */
+    background: #094771;
+    color: #fff;
+}
+
 /* check circle styling */
 .check-circle {
     width: 18px;

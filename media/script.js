@@ -15,6 +15,42 @@ function notifyReorder() {
     vscode.postMessage({ command: 'reorderBoard', columns: columns });
 }
 
+function showCardMenu(x, y, cardId, cardEl) {
+    // close any already open menus:
+    document.querySelectorAll('.context-menu').forEach(m => m.remove());
+
+    // build the menu:
+    const menu = document.createElement('div');
+    menu.className = 'context-menu';
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'context-menu-item';
+    deleteBtn.textContent = 'Delete Card';
+    deleteBtn.addEventListener('click', () => {
+        cardEl.remove();
+        vscode.postMessage({ command: 'deleteCard', id: cardId });
+        menu.remove();
+    });
+
+    menu.appendChild(deleteBtn);
+    document.body.appendChild(menu);
+
+    // close menu when user clicks enywhere else or presses escape
+    // setTimeout(0) so that THIS right click doesn't immediately trigger the close.
+    setTimeout(() => {
+        const close = () => {
+            menu.remove();
+            document.removeEventListener('click', close);
+            document.removeEventListener('keydown', escClose);
+        };
+        const escClose = (e) => { if (e.key === 'Escape') close() };
+        document.addEventListener('click', close());
+        document.addEventListener('keydown', escClose);
+    }, 0);
+}
+
 function renderCards(cards, columns) {
     const boardEl = document.querySelector('.board'); // this
 
@@ -139,6 +175,11 @@ function renderCards(cards, columns) {
             titleEl.focus(); // means the element is now recieving keyboard input.
         });
 
+        // right click on each card:
+        cardEl.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showCardMenu(e.clientX, e.clientY, card.id, cardEl);
+        });
 
         // blur event for the description.
         descEl.addEventListener('blur', () => {
