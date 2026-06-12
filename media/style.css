@@ -41,11 +41,17 @@
 
 /* baseline card styling: */
 .card {
+    cursor: grab;
     background: #2d2d2d;
     border: 1px solid #444;
     border-radius: 6px;
     padding: 8px 12px;
     margin-bottom: 8px;
+}
+
+.card.card-chosen,
+.card:active {
+    cursor: grabbing;
 }
 
 .title-row {
@@ -144,6 +150,22 @@
 .card.completed .check-circle {
     background: #888;
     border-color: #888;
+}
+
+.card-ghost {
+    opacity: 0.3;
+    background: #007acc;
+    border: 1px dashed #007acc;
+}
+
+.card-chosen {
+    cursor: grabbing;
+}
+
+.card-drag {
+    opacity: 0.9;
+    /* slight title to a card when you grab it, implies it's "being held" */
+    transform: rotate(2deg); 
 }
 
 .card.completed .check-circle::after {

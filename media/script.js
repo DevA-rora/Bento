@@ -228,6 +228,7 @@ function renderCards(cards, columns) {
         new Sortable(listEl, {
             group: 'cards',
             animation: 150,
+            emptyInsertThreshold: 50, // makes dragging cards into new columns much easier
             onEnd: notifyReorder,
         });
     });

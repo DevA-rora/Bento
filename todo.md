@@ -12,12 +12,12 @@
 - [x] Fix bug where card stops editing when user creates it (proaly cause of vscode autosave)
 - [x] Add event listener on enter down to stop editing description (same pattern as editing title)
 - [x] Add ability to make new colums (from the rightmost column)
+- [x] Add ability to delete cards (onRightClick)
+- [x] Make dragging cards much easier (especially when dragging to new columns, sortableJS fix)
 
 # Doing
-- [ ] Add ability to delete cards (onRightClick)
 
 # Todo
-- [ ] Make dragging cards much easier (especially when dragging to new columns, sortableJS fix)
 - [ ] Format all files to look nice.
 - [ ] Stress Testing / Bug fixes (get ready for shipping)
 - [ ] Add comments + documentation where required.
