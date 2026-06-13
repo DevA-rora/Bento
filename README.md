@@ -1,71 +1,115 @@
-# kanban-board README
+# 🍱 Bento: A Kanban Board for VSCode
 
-This is the README for your extension "kanban-board". After writing up a brief description, we recommend including the following sections.
+> A Kanban Board built into VSCode. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo.
+
+TODO: ADD GIF HERE
+![Kanban Board demo](assets/demo.gif)
+
+> **Heads up:** the GIF above lives at `assets/demo.gif`. If you're reading this on GitHub and the image isn't loading yet, the recording is on the to-do list — keep scrolling for the feature list in the meantime.
+
+## Why I built this
+
+I found myself always switching between different productivity apps, Notion, Trello, Todoist, and I couldn't bring myself to stay organised! Everything was too bloated, had too many features, and led me in so many different directions that I would spend more time organising and optimising what to do rather than actually doing it!
+
+So I built this really minimal Kanban board extension for VSCode. This is also especially good because any AI's I use in my workspace will have access to my tasks without having to use any sort of MCP server. Plus (add something else here)
+
+<!--
+  WRITE THIS PARAGRAPH IN YOUR OWN VOICE BEFORE SHIPPING.
+
+  2-4 sentences is plenty. Cover:
+    - the problem you actually had,
+    - why existing tools (Trello, Notion, GitHub Projects, paper) didn't fit,
+    - one specific moment that made you start.
+
+  Reviewers explicitly look for AI-written READMEs and reject them.
+  Honest beats polished — write it yourself even if it feels rough.
+-->
+
+_(write this section yourself)_
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Drag-and-drop cards** between columns, or reorder cards inside a column.
+- **Drag entire columns** to reorder the board itself.
+- **Double-click to edit** a card's title or description in place.
+- **Toggle complete** by clicking the circle — the card dims and strikes through.
+- **Right-click a card** to delete it from a context menu.
+- **One-click add** for cards (per column) and columns (at the end of the board).
+- **Two-way sync with `todo.md`** — edits in the kanban save to the markdown, and external edits to the markdown re-render the board.
+- **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons.
+- **Theme-aware** — pulls colours from your active VS Code theme, so it looks at home in light, dark, and high-contrast themes.
 
-For example if there is an image subfolder under your extension project workspace:
+## Install
 
-\!\[feature X\]\(images/feature-x.png\)
+### From the VS Code Marketplace
+_Coming soon. Until it's published, use one of the options below._
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### From a `.vsix` file
+1. Grab the latest `kanban-board-x.y.z.vsix` from [Releases](https://github.com/DevA-rora/kanban-board-vscode/releases).
+2. In VS Code: `Cmd/Ctrl+Shift+P` → **Extensions: Install from VSIX…** → pick the file.
 
-## Requirements
+### From source
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+```bash
+git clone https://github.com/DevA-rora/kanban-board-vscode
+cd kanban-board-vscode
+npm install
+npm run package
+```
 
-## Extension Settings
+Then press `F5` in VS Code to launch a dev host with the extension loaded.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Usage
 
-For example:
+1. Open a folder in VS Code.
+2. Run **Open Kanban Board** from the command palette (`Cmd/Ctrl+Shift+P`). The extension creates a starter `todo.md` in the workspace root if one doesn't exist yet.
+3. Or open any existing `todo.md` and click the kanban icon in the editor title bar to switch from the text view.
 
-This extension contributes the following settings:
+To go back to plain markdown editing, click the file-text icon in the title bar — same toggle, opposite direction.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## The `todo.md` format
 
-## Known Issues
+The board is plain markdown. You can hand-edit it in any text editor and the kanban will catch up the next time it's open:
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+```markdown
+# Todo
+- [ ] Buy milk
+remember oat milk too
 
-## Release Notes
+- [ ] Read a book
 
-Users appreciate release notes as you update your extension.
+# Doing
+- [ ] Build a kanban extension
 
-### 1.0.0
+# Done
+- [x] Drink coffee
+```
 
-Initial release of ...
+Rules:
+- `# Heading` becomes a column.
+- `- [ ] task` is an open card. `- [x] task` is a completed card.
+- The line **directly after** a card (when it isn't another card or a column heading) becomes that card's description.
+- Blank lines are ignored.
 
-### 1.0.1
+## How it works
 
-Fixed issue #.
+The extension registers a [custom text editor](https://code.visualstudio.com/api/extension-guides/custom-editors) for any file matching `**/todo.md`. The editor is a sandboxed webview that:
 
-### 1.1.0
+- Parses the markdown into `Card` and column objects on first load.
+- Renders cards into draggable lists with [SortableJS](https://github.com/SortableJS/Sortable).
+- Posts messages to the extension host whenever you edit, drag, complete, add, or delete anything.
+- The extension host applies a `WorkspaceEdit` that replaces the whole file with a re-serialised version, so your changes hit disk and Git sees normal markdown diffs.
+- A `workspace.onDidChangeTextDocument` listener keeps the webview in sync if you (or another tool) edit `todo.md` directly.
 
-Added features X, Y, and Z.
+## Development
 
----
+```bash
+npm install
+npm run watch    # esbuild + tsc in watch mode
+```
 
-## Following extension guidelines
+Press `F5` to launch the extension dev host. Source lives in [`src/extension.ts`](src/extension.ts) (extension host) and [`media/`](media/) (webview).
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+## License
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+[MIT](LICENSE). Do whatever you want with this! (just don't blame me. :0 )

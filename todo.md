@@ -18,12 +18,11 @@
 - [x] Add comments + documentation where required.
 
 # Doing
-- [ ] Stress Testing / Bug fixes (get ready for shipping)
-Try: empty todo.md, todo.md with no columns, weird unicode in titles, very long descriptions, 50+ cards in one column, rapid drag-drop spam.
-
-# Todo 
+- [ ] Fix styling so that regardless of users vscode theme, the board looks beautiful.
 - [ ] Rewrite README.md from scratch (replace the VSCode scaffold)
 This is the #1 rejection cause per the Macondo docs. Sections: one-line tagline, why-I-built-it paragraph, animated GIF demo, install steps (vsix or marketplace), usage, todo.md format reference, tech stack, license. Personal voice — reviewers can smell AI-written READMEs.
+
+# Todo 
 - [ ] Add a LICENSE file (MIT)
 GitHub UI: Add file -> Create new file -> name it LICENSE -> "Choose a license template" -> MIT. 30 seconds, blocks rejections.
 - [ ] Capture a demo GIF and 2-3 screenshots
@@ -40,6 +39,8 @@ Open hackatime.hackclub.com dashboard. Confirm "kanban_vscode" appears with non-
 URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
 
 # Backlog (Polish — Starfruit Hunt)
+- [ ] Stress Testing / Bug fixes (get ready for shipping)
+Try: empty todo.md, todo.md with no columns, weird unicode in titles, very long descriptions, 50+ cards in one column, rapid drag-drop spam.
 - [ ] Make styles theme-aware with VSCode CSS variables
 Replace hardcoded #2d2d2d, #444, #888, #007acc with var(--vscode-editor-background), var(--vscode-foreground), var(--vscode-focusBorder), var(--vscode-list-hoverBackground), etc. Test with a light theme — currently your board is unreadable on light mode. Reviewers see this instantly.
 - [ ] Design a 128x128 extension icon (PNG)
