@@ -62,7 +62,7 @@ Then press `F5` in VS Code to launch a dev host with the extension loaded.
 ## Usage
 
 1. Open a folder in VS Code.
-2. Run **Open Kanban Board** from the command palette (`Cmd/Ctrl+Shift+P`). The extension creates a starter `todo.md` in the workspace root if one doesn't exist yet.
+2. Run **Open Bento Board** from the command palette (`Cmd/Ctrl+Shift+P`). The extension creates a starter `todo.md` in the workspace root if one doesn't exist yet.
 3. Or open any existing `todo.md` and click the kanban icon in the editor title bar to switch from the text view.
 
 To go back to plain markdown editing, click the file-text icon in the title bar — same toggle, opposite direction.

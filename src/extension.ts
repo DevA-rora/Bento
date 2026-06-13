@@ -48,7 +48,7 @@ function parseMarkdown(text: string): { cards: Card[], columns: string[] } {
 
 			// check if the next line isn't a heading or a task.
 			if (nextLine && !nextLine.startsWith('# ') && !nextLine.startsWith('- [')) {
-				description = nextLine.trim() // the description is the next line.
+				description = nextLine.trim(); // the description is the next line.
 				i++; // skip the next description.
 			}
 
@@ -114,15 +114,15 @@ export function activate(context: vscode.ExtensionContext) {
 	// a "command" in VSCode is a named action that can be triggered from menus (command palette, keyboard shortcuts, or other code.)
 	// we have to do this, this is just how VSCode extensions work...
 	const openAsKanban = vscode.commands.registerCommand(
-		'kanban-board.openAsKanban',
+		'bento.openAsKanban',
 		(uri: vscode.Uri) => {
-			vscode.commands.executeCommand('vscode.openWith', uri, 'kanbanBoard.editor');
+			vscode.commands.executeCommand('vscode.openWith', uri, 'bento.openBoard');
 		}
 	);
 
-	// register VSCode command "kanban-board.openAsText"
+	// register VSCode command "bento.openAsText"
 	const openAsText = vscode.commands.registerCommand(
-		'kanban-board.openAsText',
+		'bento.openAsText',
 		(uri: vscode.Uri) => {
 			vscode.commands.executeCommand('vscode.openWith', uri, 'default');
 		}
@@ -147,12 +147,12 @@ export function activate(context: vscode.ExtensionContext) {
 			// the "document" is always todo.md because of the restriction is package.json (restricted the custom editor to just that filename)
 			// so privacy! yay clapping!
 			const changeSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
-				if (isApplyingEdit) return; // our own edit, ignore
+				if (isApplyingEdit) {return;} // our own edit, ignore
 				if (e.document.uri.toString() === document.uri.toString()) {
 					const { cards, columns } = parseMarkdown(document.getText());
 					webviewPanel.webview.postMessage({ command: 'init', cards, columns });
 				}
-			})
+			});
 
 			// configure webview options for security (WebViews are sandboxed environments)
 			webviewPanel.webview.options = {
@@ -167,9 +167,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// build URIs (moved from "extra fluff" section)
 			// basically we're allowing ourselves to use script.js and style.css.
-			const sortableUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'Sortable.min.js'))
-			const scriptUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'script.js'))
-			const styleUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'style.css'))
+			const sortableUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'Sortable.min.js'));
+			const scriptUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'script.js'));
+			const styleUri = webviewPanel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'style.css'));
 
 			// path to board.html
 			const htmlPath = path.join(context.extensionPath, 'media', 'board.html');
@@ -202,7 +202,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 					// find cards by ID and mutate its title:
 					const card = cards.find(c => c.id === message.id);
-					if (!card) return;
+					if (!card) {return;}
 					card.title = message.newTitle;
 
 					// serialise back to markdown:
@@ -226,7 +226,7 @@ export function activate(context: vscode.ExtensionContext) {
 				} else if (message.command === 'updateDescription') {
 					const { cards, columns } = parseMarkdown(document.getText());
 					const card = cards.find(c => c.id === message.id);
-					if (!card) return;
+					if (!card) {return;}
 					card.description = message.newDescription;
 					const newText = serialiseCards(cards, columns);
 					const edit = new vscode.WorkspaceEdit();
@@ -263,7 +263,7 @@ export function activate(context: vscode.ExtensionContext) {
 					for (const column of message.columns) {
 						for (const cardId of column.cardIds) {
 							const card = cardLookup.get(cardId);
-							if (!card) continue;
+							if (!card) {continue;}
 							card.column = column.name;
 							newCards.push(card);
 						}
@@ -291,7 +291,7 @@ export function activate(context: vscode.ExtensionContext) {
 				} else if (message.command === 'toggleComplete') {
 					const { cards, columns } = parseMarkdown(document.getText());
 					const card = cards.find(c => c.id === message.id);
-					if (!card) return;
+					if (!card) {return;}
 					card.completed = !card.completed; // flip
 					const newText = serialiseCards(cards, columns);
 					const edit = new vscode.WorkspaceEdit();
@@ -351,7 +351,7 @@ export function activate(context: vscode.ExtensionContext) {
 						prompt: 'Column name',
 						placeHolder: 'e.g. Backlog'
 					});
-					if (!name) return; // the user pressed escape
+					if (!name) {return;} // the user pressed escape
 
 					const { cards, columns } = parseMarkdown(document.getText());
 
@@ -389,7 +389,7 @@ export function activate(context: vscode.ExtensionContext) {
 				} else if (message.command === 'deleteCard') {
 					const { cards, columns } = parseMarkdown(document.getText());
 					const filtered = cards.filter(c => c.id !== message.id);
-					if (filtered.length === cards.length) return; // not found, so we can just ignore.
+					if (filtered.length === cards.length) {return;} // not found, so we can just ignore.
 
 					const newText = serialiseCards(filtered, columns);
 					const edit = new vscode.WorkspaceEdit();
@@ -406,25 +406,25 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 				} else {
 					// something strange going on in the neighbourhood if ts is happening:
-					console.warn("[kanban] unknown command coming from webview:", message);
+					console.warn("[[bento] unknown command coming from webview:", message);
 				}
 			});
 		}
 	};
 	// register editor:
 	const editorRegistration = vscode.window.registerCustomEditorProvider(
-		'kanbanBoard.editor', // must match with the viewType in package.json
+		'bento.openBoard', // must match with the viewType in package.json
 		kanbanProvider
 	);
 	context.subscriptions.push(editorRegistration);
 
 	// entry point the user can invoke from the command palette (zero-context trigger)
-	const boardDisposable = vscode.commands.registerCommand('kanban-board.openBoard', () => {
+	const boardDisposable = vscode.commands.registerCommand('beto.openBoard', () => {
 		// find the workspace
 		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
 		// ? is optional chaining. doesn't crash if workspace folders is undefined.
 		if (!workspaceFolder) {
-			vscode.window.showErrorMessage("Please open a folder to use the Kanban Board!");
+			vscode.window.showErrorMessage("Please open a folder to use Bento!");
 			return;
 		}
 
@@ -445,7 +445,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		// open it with the custon editor!
 		const todoUri = vscode.Uri.file(todoPath);
-		vscode.commands.executeCommand('vscode.openWith', todoUri, 'kanbanBoard.editor');
+		vscode.commands.executeCommand('vscode.openWith', todoUri, 'bento.openBoard');
 
 	});
 

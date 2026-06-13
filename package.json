@@ -1,7 +1,7 @@
 {
-  "name": "kanban-board",
-  "displayName": "Kanban Board",
-  "description": "A VSCode Kanban Board to manage tasks for your projects!",
+  "name": "bento",
+  "displayName": "Bento",
+  "description": "A VS Code Kanban Board to manage tasks for your projects!",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.90.0"
@@ -9,29 +9,40 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "kanban",
+    "todo",
+    "markdown",
+    "productivity",
+    "board"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevA-rora/kanban-board-vscode.git"
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "kanban-board.openBoard",
-        "title": "Open Kanban Board"
+        "command": "bento.openBoard",
+        "title": "Open Bento Board"
       },
       {
-        "command": "kanban-board.openAsText",
+        "command": "bento.openAsText",
         "title": "Open as Text",
         "icon": "$(file-text)"
       },
       {
-        "command": "kanban-board.openAsKanban",
-        "title": "Open as Kanban",
+        "command": "bento.openAsKanban",
+        "title": "Open as Bento",
         "icon": "$(checklist)"
       }
     ],
     "customEditors": [
       {
-        "viewType": "kanbanBoard.editor",
-        "displayName": "Kanban Board",
+        "viewType": "bento.editor",
+        "displayName": "Bento Board",
         "selector": [
           {
             "filenamePattern": "**/todo.md"
@@ -43,13 +54,13 @@
     "menus": {
       "editor/title": [
         {
-          "command": "kanban-board.openAsKanban",
+          "command": "bento.openAsKanban",
           "when": "resourceFilename == 'todo.md' && !activeCustomEditorId",
           "group": "navigation"
         },
         {
-          "command": "kanban-board.openAsText",
-          "when": "resourceFilename == 'todo.md' && activeCustomEditorId == 'kanbanBoard.editor'",
+          "command": "bento.openAsText",
+          "when": "resourceFilename == 'todo.md' && activeCustomEditorId == 'bento.editor'",
           "group": "navigation"
         }
       ]

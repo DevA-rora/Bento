@@ -16,13 +16,13 @@
 - [x] Make dragging cards much easier (especially when dragging to new columns, sortableJS fix)
 - [x] Format all files to look nice.
 - [x] Add comments + documentation where required.
+- [x] Fix styling so that regardless of users vscode theme, the board looks beautiful.
 
-# Doingk
-- [ ] Fix styling so that regardless of users vscode theme, the board looks beautiful.
-- [ ] Rewrite README.md from scratch (replace the VSCode scaffold)
-This is the #1 rejection cause per the Macondo docs. Sections: one-line tagline, why-I-built-it paragraph, animated GIF demo, install steps (vsix or marketplace), usage, todo.md format reference, tech stack, license. Personal voice — reviewers can smell AI-written READMEs.
+# Doing
 
 # Todo 
+- [ ] Rewrite README.md from scratch (replace the VSCode scaffold)
+This is the #1 rejection cause per the Macondo docs. Sections: one-line tagline, why-I-built-it paragraph, animated GIF demo, install steps (vsix or marketplace), usage, todo.md format reference, tech stack, license. Personal voice — reviewers can smell AI-written READMEs.
 - [ ] Add a LICENSE file (MIT)
 GitHub UI: Add file -> Create new file -> name it LICENSE -> "Choose a license template" -> MIT. 30 seconds, blocks rejections.
 - [ ] Capture a demo GIF and 2-3 screenshots
