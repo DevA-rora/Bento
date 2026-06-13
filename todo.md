@@ -17,7 +17,7 @@
 - [x] Format all files to look nice.
 - [x] Add comments + documentation where required.
 
-# Doing
+# Doingk
 - [ ] Fix styling so that regardless of users vscode theme, the board looks beautiful.
 - [ ] Rewrite README.md from scratch (replace the VSCode scaffold)
 This is the #1 rejection cause per the Macondo docs. Sections: one-line tagline, why-I-built-it paragraph, animated GIF demo, install steps (vsix or marketplace), usage, todo.md format reference, tech stack, license. Personal voice — reviewers can smell AI-written READMEs.

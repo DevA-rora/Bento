@@ -1,10 +1,20 @@
 /* --- Card --- */
 
+/* webview defaults: inherit fonts & base colours from the users theme */
+body {
+    background: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+}
+
 /* baseline card styling: */
 .card {
     cursor: grab;
-    background: #2d2d2d;
-    border: 1px solid #444;
+    /* match background, colour, and border to match with the user's VSCode theme. */
+    background: var(--vscode-editorWidget-background, #2d2d2d);
+    color: var(--vscode-editorWidget-foreground, var(--vscode-foreground, #ccc));
+    border: 1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border, #444));
     border-radius: 6px;
     padding: 8px 12px;
     margin-bottom: 8px;
@@ -17,43 +27,47 @@
     padding: 8px 12px;
     margin-bottom: 8px;
     background: transparent;
-    border: 1px dashed #555;
+    border: 1px dashed var(--vscode-input-border, #555);
     border-radius: 6px;
-    color: #888;
+    color: var(--vscode-descriptionForeground, #888);
     cursor: pointer;
     font-size: inherit;
     font-family: inherit;
 }
 
 .add-card:hover {
-    border-color: #888;
-    color: #ccc;
-    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--vscode-focusBorder, #888);
+    color: var(--vscode-foreground, #ccc);
+    background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.03));
 }
 
 /* card completed styling: */
+/* dim + strikethrough --> opacity is theme-agnostic */
 .card.completed {
-    opacity: 0.5;
     /* make entire card 50% transparent */
-    text-decoration: line-through;
+    opacity: 0.5;
     /* strikethrough */
+    text-decoration: line-through;
 }
 
-
+/* when the user "grabs" the card with their cursor, change the mouse to be "grabbing" */
 .card.card-chosen,
 .card:active {
     cursor: grabbing;
 }
 
+/* card check-circle styling */
 .card.completed .check-circle {
-    background: #888;
-    border-color: #888;
+    background: var(--vscode-descriptionForeground, #888);
+    border-color: var(--vscode-descriptionForeground, #888);
 }
 
+/* drop indicator while dragging */
+/* use the theme's focus colour for the tint */
 .card-ghost {
     opacity: 0.3;
-    background: #007acc;
-    border: 1px dashed #007acc;
+    background: var(--vscode-focusBorder, #007acc);
+    border: 1px dashed var(--vscode-focusBorder, #007acc);
 }
 
 .card-chosen {
@@ -66,34 +80,34 @@
     transform: rotate(2deg);
 }
 
+/* checkmark inside the completed circle */
+/* uses editor-background so it reads on whatever colour the filled circle ended up being */
 .card.completed .check-circle::after {
     content: '✓';
-    color: #1e1e1e;
+    color: var(--vscode-editor-background, #1e1e1e);
     font-size: 12px;
     line-height: 1;
     display: block;
 }
 
-/* Card Check Circle */
-
 /* Card Title Row */
 
 .card h3,
 .card p {
-    /* should remove top padding, so the checkCircle should now be inline with text (fingers crossed 🤞) */
+    /* make checkCircle inline w/the text */
     margin: 0;
 }
 
 .card h3[contenteditable="true"]:focus {
-    outline: 2px solid #007acc;
+    outline: 2px solid var(--vscode-focusBorder, #007acc);
     outline-offset: 2px;
     border-radius: 2px;
 }
 
-/* style the card if  it contains a focused editable h3 */
+/* style the card if it contains a focused editable h3 */
 .card:has(h3[contenteditable="true"]:focus) {
-    background: #3a3a3a;
-    border-color: #007acc;
+    background: var(--vscode-input-background, #3a3a3a);
+    border-color: var(--vscode-focusBorder, #007acc);
 }
 
 .card p.description[contenteditable="true"]:empty::before {
@@ -107,8 +121,6 @@
 .card h3 {
     cursor: text;
 }
-
-
 
 .board {
     /* flex does the following:
@@ -150,10 +162,10 @@
     align-self: flex-start;
     background: transparent;
     /* change border to be dotted instead of dashed */
-    border: 1px dashed #666;
+    border: 1px dashed var(--vscode-input-border, #666);
     /* add rounded corners */
     border-radius: 8px;
-    color: #888;
+    color: var(--vscode-descriptionForeground, #888);
     cursor: pointer;
     /* make padding tighter */
     padding: 8px 12px;
@@ -164,18 +176,19 @@
 }
 
 .add-column:hover {
-    border-color: #888;
-    color: #ccc;
-    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--vscode-focusBorder, #888);
+    color: var(--vscode-foreground, #ccc);
+    background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.03));
 }
 
 .context-menu {
     /* coordinates relative to viewport: */
     position: fixed;
     min-width: 140px;
-    background: #252525;
-    border: 1px solid #454545;
+    background: var(--vscode-menu-background, #252525);
+    border: 1px solid var(--vscode-menu-border, #454545);
     border-radius: 4px;
+    /* drop shadow stays as a fixed rbga (this should work over both light + dark menus!!!) */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     padding: 4px 0;
     /* force context menu to be displayed above everything else */
@@ -189,7 +202,7 @@
     padding: 6px 14px;
     background: transparent;
     border: none;
-    color: #ccc;
+    color: var(--vscode-menu-foreground, #ccc);
     cursor: pointer;
     font-size: inherit;
     font-family: inherit;
@@ -198,8 +211,8 @@
 
 .context-menu-item:hover {
     /* vscode selection blue colour */
-    background: #094771;
-    color: #fff;
+    background: var(--vscode-menu-selectionBackground, #094771);
+    color: var(--vscode-menu-selectionForeground, #fff);
 }
 
 /* check circle styling */
@@ -208,7 +221,7 @@
     height: 18px;
     /* turn the circle into a circle */
     border-radius: 50%;
-    border: 1.5px solid #888;
+    border: 1.5px solid var(--vscode-checkbox-border, var(--vscode-descriptionForeground, #888));
     background: transparent;
     cursor: pointer;
     padding: 0;
@@ -218,8 +231,8 @@
 
 /* check circle onHover styling */
 .check-circle:hover {
-    border-color: #bbb;
-    background: rgba(225, 225, 225, 0.05);
+    border-color: var(--vscode-foreground, #bbb);
+    background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.05));
 }
 
 
