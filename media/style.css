@@ -1,15 +1,13 @@
-.board {
-    /* flex does the following:
-    - lets me arrange items horizontally instead of vertically.
-    */
-    display: flex;
-    gap: 16px; /* puts 16px space between flex items */
-    padding: 16px; /* space between edge of webview & columns */
-}
+/* --- Card --- */
 
-.column {
-    flex: 1; /* each column takes equal share of the row. */
-    min-width: 0; /* allows column to shrink as required. (whatever that means) */
+/* baseline card styling: */
+.card {
+    cursor: grab;
+    background: #2d2d2d;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
 }
 
 /* greyed out add card styling: */
@@ -33,31 +31,108 @@
     background: rgba(255, 255, 255, 0.03);
 }
 
-/* card compelted styling: */
+/* card completed styling: */
 .card.completed {
-    opacity: 0.5; /* make entire card 50% transparent */
-    text-decoration: line-through; /* strikethrough */
+    opacity: 0.5;
+    /* make entire card 50% transparent */
+    text-decoration: line-through;
+    /* strikethrough */
 }
 
-/* baseline card styling: */
-.card {
-    cursor: grab;
-    background: #2d2d2d;
-    border: 1px solid #444;
-    border-radius: 6px;
-    padding: 8px 12px;
-    margin-bottom: 8px;
-}
 
 .card.card-chosen,
 .card:active {
     cursor: grabbing;
 }
 
+.card.completed .check-circle {
+    background: #888;
+    border-color: #888;
+}
+
+.card-ghost {
+    opacity: 0.3;
+    background: #007acc;
+    border: 1px dashed #007acc;
+}
+
+.card-chosen {
+    cursor: grabbing;
+}
+
+.card-drag {
+    opacity: 0.9;
+    /* slight title to a card when you grab it, implies it's "being held" */
+    transform: rotate(2deg);
+}
+
+.card.completed .check-circle::after {
+    content: '✓';
+    color: #1e1e1e;
+    font-size: 12px;
+    line-height: 1;
+    display: block;
+}
+
+/* Card Check Circle */
+
+/* Card Title Row */
+
+.card h3,
+.card p {
+    /* should remove top padding, so the checkCircle should now be inline with text (fingers crossed 🤞) */
+    margin: 0;
+}
+
+.card h3[contenteditable="true"]:focus {
+    outline: 2px solid #007acc;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* style the card if  it contains a focused editable h3 */
+.card:has(h3[contenteditable="true"]:focus) {
+    background: #3a3a3a;
+    border-color: #007acc;
+}
+
+.card p.description[contenteditable="true"]:empty::before {
+    content: 'Add a description...';
+    opacity: 0.5;
+    font-style: italic;
+}
+
+/* changes the cursor when hovering over the title */
+/* the h3 means when I click on the 'h3' part of the card, or the text. */
+.card h3 {
+    cursor: text;
+}
+
+
+
+.board {
+    /* flex does the following:
+    - lets me arrange items horizontally instead of vertically.
+    */
+    display: flex;
+    gap: 16px;
+    /* puts 16px space between flex items */
+    padding: 16px;
+    /* space between edge of webview & columns */
+}
+
+.column {
+    flex: 1;
+    /* each column takes equal share of the row. */
+    min-width: 0;
+    /* allows column to shrink as required. (whatever that means) */
+}
+
+
 .title-row {
     display: flex;
     /* circle & title are vertically centred: */
-    align-items: centre;
+    align-items: center;
     gap: 8px;
     /* space between title row & description */
     margin-bottom: 6px;
@@ -147,67 +222,10 @@
     background: rgba(225, 225, 225, 0.05);
 }
 
-.card.completed .check-circle {
-    background: #888;
-    border-color: #888;
-}
-
-.card-ghost {
-    opacity: 0.3;
-    background: #007acc;
-    border: 1px dashed #007acc;
-}
-
-.card-chosen {
-    cursor: grabbing;
-}
-
-.card-drag {
-    opacity: 0.9;
-    /* slight title to a card when you grab it, implies it's "being held" */
-    transform: rotate(2deg); 
-}
-
-.card.completed .check-circle::after {
-    content: '✓';
-    color: #1e1e1e;
-    font-size: 12px;
-    line-height: 1;
-    display: block;
-}
-
-.card h3,
-.card p {
-    /* should remove top padding, so the checkCircle should now be inline with text (fingers crossed 🤞) */
-    margin: 0;
-}
-
-.card h3[contenteditable="true"]:focus {
-    outline: 2px solid #007acc;
-    outline-offset: 2px;
-    border-radius: 2px;
-}
-
-/* style the card if  it contains a focused editable h3 */
-.card:has(h3[contenteditable="true"]:focus) {
-    background: #3a3a3a;
-    border-color: #007acc;
-}
-
-.card p.description[contenteditable="true"]:empty::before {
-    content: 'Add a description...';
-    opacity: 0.5;
-    font-style: italic;
-}
-
-/* changes the cursor when hovering over the title */
-/* the h3 means when I click on the 'h3' part of the card, or the text. */
-.card h3 {
-    cursor: text;
-}
 
 .placeholder {
     opacity: 0.5;
     font-style: italic;
-    /* size: 2em; */ /* maybe not include this, should already be styled... */
+    /* size: 2em; */
+    /* maybe not include this, should already be styled... */
 }

@@ -1,11 +1,15 @@
+<!-- this is just the HTML skeleton, the acutal elements are rendered with js in "script.js". -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Kanban Board </title>
+	<meta http-equiv="Content-Security-Policy" ...>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> Kanban Board </title>
 	<link rel="stylesheet" href="{{styleUri}}">
 </head>
+
 <body>
 	<div class="board">
 		<!-- add stuff in here using js. -->
@@ -13,31 +17,5 @@
 	<script src="{{sortableUri}}"></script>
 	<script src="{{scriptUri}}"></script>
 </body>
+
 </html>
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Kanban Board</title>
-
-</head>
-
-<body>
-	<h1>Kanban Board</h1>
-
-	<button id="thoughtsButton">Thoughts?</button>
-
-	<script>
-		const vscode = acquireVsCodeApi();
-		document.getElementById('thoughtsButton').addEventListener('click', () => {
-			vscode.postMessage({ command: 'buttonClicked', text: 'Hello from the webview!' });
-			console.log('button clicked');
-		});
-	</script>
-
-	</body>
-</html> -->

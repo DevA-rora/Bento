@@ -32,9 +32,12 @@
       {
         "viewType": "kanbanBoard.editor",
         "displayName": "Kanban Board",
-        "selector": [ { "filenamePattern": "**/todo.md" }
+        "selector": [
+          {
+            "filenamePattern": "**/todo.md"
+          }
         ],
-        "priority": "option" 
+        "priority": "option"
       }
     ],
     "menus": {

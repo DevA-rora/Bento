@@ -1,6 +1,10 @@
 // acquire the VSCode API:
 const vscode = acquireVsCodeApi();
 
+// after the user finishes a drag & drop:
+    // walk through the DOM
+    // read out which cards are in which columns
+    // "notify" the extension so it can save the new order to todo.md
 function notifyReorder() {
     const columns = [];
     document.querySelectorAll('.card-list').forEach((listEl) => {
@@ -15,6 +19,7 @@ function notifyReorder() {
     vscode.postMessage({ command: 'reorderBoard', columns: columns });
 }
 
+// show a right-click context menu on a card
 function showCardMenu(x, y, cardId, cardEl) {
     // close any already open menus:
     document.querySelectorAll('.context-menu').forEach(m => m.remove());
@@ -25,6 +30,7 @@ function showCardMenu(x, y, cardId, cardEl) {
     menu.style.left = x + 'px';
     menu.style.top = y + 'px';
 
+    // create the delete button 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'context-menu-item';
     deleteBtn.textContent = 'Delete Card';
@@ -34,8 +40,8 @@ function showCardMenu(x, y, cardId, cardEl) {
         menu.remove();
     });
 
-    menu.appendChild(deleteBtn);
-    document.body.appendChild(menu);
+    menu.appendChild(deleteBtn); // put button inside the menu
+    document.body.appendChild(menu); // "mount" the menu onto the page
 
     // close menu when user clicks enywhere else or presses escape
     // setTimeout(0) so that THIS right click doesn't immediately trigger the close.
@@ -51,6 +57,7 @@ function showCardMenu(x, y, cardId, cardEl) {
     }, 0);
 }
 
+// build Kanban board UI from scratch in the WebView.
 function renderCards(cards, columns) {
     const boardEl = document.querySelector('.board'); // this
 
@@ -61,6 +68,10 @@ function renderCards(cards, columns) {
         existingBoardSortable.destroy();
     }
 
+    // destroy old per-column Sortables, otherwise each re-render leaks them
+    document.querySelectorAll('.card-list').forEach((listEl) => {
+        Sortable.get(listEl)?.destroy();
+    })
     // clear board:
     boardEl.innerHTML = '';
 
@@ -77,8 +88,8 @@ function renderCards(cards, columns) {
         listEl.dataset.column = columnId;
 
         const headingEl = document.createElement('h2');
-        // captialise columns:
-        headingEl.textContent = columnId.charAt(0).toUpperCase() + columnId.slice(1);
+        // display column name as-is (preserving the user's casing from todo.md)
+        headingEl.textContent = columnId;
         // append heading & list.
         colEl.appendChild(headingEl);
         colEl.appendChild(listEl);
@@ -276,4 +287,5 @@ window.addEventListener('message', (event) => {
     }
 });
 
+// sends payload from the webview to the extension.
 vscode.postMessage({ command: 'ready' });
