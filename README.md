@@ -6,7 +6,7 @@
 ![Last commit](https://img.shields.io/github/last-commit/DevA-rora/kanban-board-vscode)
 [![Roadmap](https://img.shields.io/badge/roadmap-7%2F20%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
 
-> A Kanban Board built into VSCode. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
+> A Kanban Board built into VS Code. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
 ![Bento kanban board in VS Code showing drag-and-drop, task editing, completion toggles, and theme compatibility](assets/bento_demo_v1.gif)
 
@@ -14,7 +14,7 @@
 
 I found myself always switching between different productivity apps, Notion, Trello, Todoist, and I couldn't bring myself to stay organised! Everything was too bloated, had too many features, and led me in so many different directions that I would spend more time organising and optimising what to do rather than actually doing it!
 
-So I built this really minimal Kanban board extension for VSCode. This is also especially good because any AI agents I use in my workspace will have access to my tasks without having to use any sort of MCP server. Now, for most of my hobby projects, I don't have to worry about tracking my todos or progress!
+So I built this really minimal Kanban board extension for VS Code. This is also especially good because any AI agents I use in my workspace will have access to my tasks without having to use any sort of MCP server. Now, for most of my hobby projects, I don't have to worry about tracking my todos or progress!
 
 ## Features
 
@@ -103,7 +103,7 @@ npm install
 npm run watch    # esbuild + tsc in watch mode
 ```
 
-Press `F5` to launch the extension dev host. Source lives in `[src/extension.ts](src/extension.ts)` (extension host) and `[media/](media/)` (webview).
+Press `F5` to launch the extension dev host. Source lives in [src/extension.ts](src/extension.ts) (extension host) and [media/](media/) (webview).
 
 ## License
 
