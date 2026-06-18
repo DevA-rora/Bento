@@ -1,7 +1,14 @@
 {
   "name": "bento",
+  "publisher": "DevArora",
   "displayName": "Bento",
   "description": "A VS Code Kanban Board to manage tasks for your projects!",
+  "author": "Dev Arora",
+  "license": "MIT",
+  "homepage": "https://github.com/DevA-rora/kanban-board-vscode#readme",
+  "bugs": {
+    "url": "https://github.com/DevA-rora/kanban-board-vscode/issues"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.90.0"
@@ -52,6 +59,16 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "bento.openAsKanban",
+          "when": "false"
+        },
+        {
+          "command": "bento.openAsText",
+          "when": "false"
+        }
+      ],
       "editor/title": [
         {
           "command": "bento.openAsKanban",

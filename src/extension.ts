@@ -116,7 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const openAsKanban = vscode.commands.registerCommand(
 		'bento.openAsKanban',
 		(uri: vscode.Uri) => {
-			vscode.commands.executeCommand('vscode.openWith', uri, 'bento.openBoard');
+			vscode.commands.executeCommand('vscode.openWith', uri, 'bento.editor');
 		}
 	);
 
@@ -413,13 +413,13 @@ export function activate(context: vscode.ExtensionContext) {
 	};
 	// register editor:
 	const editorRegistration = vscode.window.registerCustomEditorProvider(
-		'bento.openBoard', // must match with the viewType in package.json
+		'bento.editor', // must match with the viewType in package.json
 		kanbanProvider
 	);
 	context.subscriptions.push(editorRegistration);
 
 	// entry point the user can invoke from the command palette (zero-context trigger)
-	const boardDisposable = vscode.commands.registerCommand('beto.openBoard', () => {
+	const boardDisposable = vscode.commands.registerCommand('bento.openBoard', () => {
 		// find the workspace
 		const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
 		// ? is optional chaining. doesn't crash if workspace folders is undefined.
@@ -445,7 +445,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		// open it with the custon editor!
 		const todoUri = vscode.Uri.file(todoPath);
-		vscode.commands.executeCommand('vscode.openWith', todoUri, 'bento.openBoard');
+		vscode.commands.executeCommand('vscode.openWith', todoUri, 'bento.editor');
 
 	});
 
