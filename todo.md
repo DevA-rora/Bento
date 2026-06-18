@@ -25,7 +25,14 @@
 - [x] Publish to the VSCode Marketplace
 
 # Doing
-- [ ] Write up README.md
+- [-] Write up README.md
+- [ ] ROADMAP
+- [ ] Add badges
+- [ ] Requirements
+- [ ] Commands table
+- [ ] CHANGELOG link
+- [ ] Static screenshots (2-3 PNGS alongside GIF)
+- [ ] Markplace search screenshot (once it becomes visible!!!)
 
 
 # Todo 

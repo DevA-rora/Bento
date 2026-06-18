@@ -1,4 +1,13 @@
-# 🍱 Bento: A Kanban Board for VSCode
+# 🍱 Bento: A Kanban Board for VS Code
+
+[![VS Code Marketplace](https://img.shields.io/badge/VS%20Marketplace-Install-007ACC?logo=visualstudiocode)](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
+[![Version](https://img.shields.io/badge/version-0.0.1-blue)](https://github.com/DevA-rora/kanban-board-vscode/releases)
+[![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.90-007ACC?logo=visualstudiocode)](https://code.visualstudio.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Roadmap](https://img.shields.io/badge/roadmap-7%2F18%20shipped-brightgreen)](#roadmap)
+![GitHub stars](https://img.shields.io/github/stars/DevA-rora/kanban-board-vscode)
+![Last commit](https://img.shields.io/github/last-commit/DevA-rora/kanban-board-vscode)
 
 > A Kanban Board built into VSCode. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
@@ -8,7 +17,7 @@
 
 I found myself always switching between different productivity apps, Notion, Trello, Todoist, and I couldn't bring myself to stay organised! Everything was too bloated, had too many features, and led me in so many different directions that I would spend more time organising and optimising what to do rather than actually doing it!
 
-So I built this really minimal Kanban board extension for VSCode. This is also especially good because any AI's I use in my workspace will have access to my tasks without having to use any sort of MCP server. Now, for most of my hobby projects, I don't have to worry about tracking my todos or progress!!
+So I built this really minimal Kanban board extension for VSCode. This is also especially good because any AI agents I use in my workspace will have access to my tasks without having to use any sort of MCP server. Now, for most of my hobby projects, I don't have to worry about tracking my todos or progress!
 
 ## Features
 
@@ -25,7 +34,7 @@ So I built this really minimal Kanban board extension for VSCode. This is also e
 
 ### From the VS Code Marketplace
 
-Bento is now published on the VSCode Marketplace!
+Bento is now published on the VS Code Marketplace!
 
 [Install Bento From Marketplace](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
 > New extensions can take a little while to appear in search. If "Bento" doesn't show up yet, use the direct link above.
@@ -54,7 +63,6 @@ Then press `F5` in VS Code to launch a dev host with the extension loaded.
 3. Or open any existing `todo.md` and click the kanban icon in the editor title bar to switch from the text view.
 
 To go back to plain markdown editing, click the 3 dots at the top right to open the overflow menu, then select "Open as Text"
-(building in interactive toggle feature like in the "Mermaid" extension in another release...)
 
 ## The `todo.md` format
 
@@ -103,3 +111,33 @@ Press `F5` to launch the extension dev host. Source lives in `[src/extension.ts]
 ## License
 
 [MIT](LICENSE). Do whatever you want with this! (just don't blame me. 😮)
+
+## Roadmap
+
+Shipped features, what's next, and ideas on the horizon. Update the progress badge above when you check items off.
+
+### Shipped
+- [x] **Custom editor:** Kanban board for any `todo.md` in your workspace.
+- [x] **Drag-and-drop:** Move cards between columns and reorder columns on the board.
+- [x] **Inline editing:** Double-click to edit card titles and descriptions in place.
+- [x] **Completion toggle:** Click the circle to mark tasks done (dim + strikethrough).
+- [x] **Card & column management:** Add cards, add columns, right-click to delete.
+- [x] **Markdown sync:** Board edits write back to `todo.md`; external edits re-render the board.
+- [x] **Marketplace release:** Installable from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=DevArora.bento).
+
+### Next up
+- [ ] **Toolbar toggle:** Switch between kanban and markdown from the editor title bar (like the Mermaid extension).
+- [ ] **Extension icon:** A proper 128×128 Marketplace icon (no more default puzzle piece).
+- [ ] **Keyboard shortcuts:** Toggle complete and delete focused cards without the mouse.
+- [ ] **Empty state:** Helpful UI when `todo.md` has no columns yet.
+- [ ] **README assets:** Better demo GIF and static screenshots for the listing.
+
+### Planned
+- [ ] **Due dates:** Parse `@2026-08-15` in markdown into a date pill on the card.
+- [ ] **Labels & colours:** Simple tag syntax for card stripes (e.g. `#urgent`, `:red:`).
+- [ ] **Configurable filename:** Support kanban boards on files other than `todo.md`.
+
+### Ideas
+- [ ] **Landing page:** A small `.dino.icu` site with install link and demo.
+- [ ] **Open VSX:** One-click install for Cursor / VSCodium users.
+- [ ] **Walkthrough video:** A short YouTube demo linked from the README.
