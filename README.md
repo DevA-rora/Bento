@@ -2,12 +2,9 @@
 
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Marketplace-Install-007ACC?logo=visualstudiocode)](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
 [![Version](https://img.shields.io/badge/version-0.0.1-blue)](https://github.com/DevA-rora/kanban-board-vscode/releases)
-[![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.90-007ACC?logo=visualstudiocode)](https://code.visualstudio.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Roadmap](https://img.shields.io/badge/roadmap-7%2F18%20shipped-brightgreen)](#roadmap)
-![GitHub stars](https://img.shields.io/github/stars/DevA-rora/kanban-board-vscode)
 ![Last commit](https://img.shields.io/github/last-commit/DevA-rora/kanban-board-vscode)
+[![Roadmap](https://img.shields.io/badge/roadmap-7%2F20%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
 
 > A Kanban Board built into VSCode. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
@@ -110,34 +107,34 @@ Press `F5` to launch the extension dev host. Source lives in `[src/extension.ts]
 
 ## License
 
-[MIT](LICENSE). Do whatever you want with this! (just don't blame me. 😮)
+[MIT](LICENSE). Do whatever you want with this! (just don't blame me 😮)
 
 ## Roadmap
 
-Shipped features, what's next, and ideas on the horizon. Update the progress badge above when you check items off.
-
 ### Shipped
-- [x] **Custom editor:** Kanban board for any `todo.md` in your workspace.
-- [x] **Drag-and-drop:** Move cards between columns and reorder columns on the board.
-- [x] **Inline editing:** Double-click to edit card titles and descriptions in place.
-- [x] **Completion toggle:** Click the circle to mark tasks done (dim + strikethrough).
-- [x] **Card & column management:** Add cards, add columns, right-click to delete.
-- [x] **Markdown sync:** Board edits write back to `todo.md`; external edits re-render the board.
-- [x] **Marketplace release:** Installable from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=DevArora.bento).
+- [x] **Kanban custom editor** for `todo.md` in VS Code.
+- [x] **Drag-and-drop** cards between columns and reorder columns on the board.
+- [x] **Inline editing** for card titles and descriptions.
+- [x] **Completion toggle** with strike-through styling.
+- [x] **Card & column controls**: add cards, add columns, right-click delete.
+- [x] **Two-way markdown sync**: board edits save to `todo.md`; file edits re-render the board.
+- [x] **VS Code Marketplace**: [published and installable](https://marketplace.visualstudio.com/items?itemName=DevArora.bento).
 
 ### Next up
-- [ ] **Toolbar toggle:** Switch between kanban and markdown from the editor title bar (like the Mermaid extension).
-- [ ] **Extension icon:** A proper 128×128 Marketplace icon (no more default puzzle piece).
-- [ ] **Keyboard shortcuts:** Toggle complete and delete focused cards without the mouse.
-- [ ] **Empty state:** Helpful UI when `todo.md` has no columns yet.
-- [ ] **README assets:** Better demo GIF and static screenshots for the listing.
+- [ ] **Toolbar toggle**: flip between kanban and markdown from the editor title bar (like Mermaid).
+- [ ] **Extension icon**: 128×128 PNG for the Marketplace listing.
+- [ ] **Keyboard shortcuts**: e.g. toggle complete and delete focused cards.
+- [ ] **README polish**: requirements section, commands table, CHANGELOG link.
+- [ ] **Demo assets**: better GIF and 2–3 static screenshots.
+- [ ] **Marketplace search screenshot**: once Bento shows up in search.
 
-### Planned
-- [ ] **Due dates:** Parse `@2026-08-15` in markdown into a date pill on the card.
-- [ ] **Labels & colours:** Simple tag syntax for card stripes (e.g. `#urgent`, `:red:`).
-- [ ] **Configurable filename:** Support kanban boards on files other than `todo.md`.
+### Polish
+- [ ] **Stress testing**: empty `todo.md`, no columns, unicode, long text, 50+ cards, rapid drag-drop.
+- [ ] **Light-theme fix**: replace hardcoded colours with VS Code CSS variables.
+- [ ] **Empty-state UI**: hint when `todo.md` has no columns yet.
 
-### Ideas
-- [ ] **Landing page:** A small `.dino.icu` site with install link and demo.
-- [ ] **Open VSX:** One-click install for Cursor / VSCodium users.
-- [ ] **Walkthrough video:** A short YouTube demo linked from the README.
+### Ideas (starfruit: only if I keep scope minimal)
+- [ ] **Landing page**: static site on a `.dino.icu` subdomain.
+- [ ] **Walkthrough video**: short demo on YouTube, linked from the README.
+- [ ] **Due date syntax**: optional `@2026-08-15` pills on cards.
+- [ ] **Card colours / labels**: optional tag syntax (e.g. `#urgent`, `:red:`).
