@@ -22,13 +22,14 @@
 - [x] Fill out package.json metadata
 - [x] Rewrite README.md from scratch (replace the VSCode scaffold) (v1 is done)
 - [x] Verify Hackatime is logging this exact folder name
+- [x] Publish to the VSCode Marketplace
 
 # Doing
-- [ ] Publish to the VSCode Marketplace
-Sign up for a publisher ID at marketplace.visualstudio.com/manage. npm i -g @vscode/vsce. vsce package, then vsce publish. Marketplace URL becomes the cleanest possible Playable URL — almost no other Macondo software project does this.
+- [ ] Write up README.md
 
 
 # Todo 
+- [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
 - [ ] Capture a demo GIF and 2-3 screenshots
 Record: drag a card across columns, double-click edit, toggle complete, add card, add column, right-click delete. Save to assets/ and embed in README. Use ScreenToGif (Win) or Kap (Mac). Keep under 5MB.
 - [ ] Test the fresh-clone install flow end-to-end

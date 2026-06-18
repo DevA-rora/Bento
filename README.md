@@ -1,52 +1,40 @@
 # 🍱 Bento: A Kanban Board for VSCode
 
-> A Kanban Board built into VSCode. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo.
+> A Kanban Board built into VSCode. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
-TODO: ADD GIF HERE
-![Kanban Board demo](assets/demo.gif)
-
-> **Heads up:** the GIF above lives at `assets/demo.gif`. If you're reading this on GitHub and the image isn't loading yet, the recording is on the to-do list — keep scrolling for the feature list in the meantime.
+![Bento kanban board in VS Code showing drag-and-drop, task editing, completion toggles, and theme compatibility](assets/bento_demo_v1.gif)
 
 ## Why I built this
 
 I found myself always switching between different productivity apps, Notion, Trello, Todoist, and I couldn't bring myself to stay organised! Everything was too bloated, had too many features, and led me in so many different directions that I would spend more time organising and optimising what to do rather than actually doing it!
 
-So I built this really minimal Kanban board extension for VSCode. This is also especially good because any AI's I use in my workspace will have access to my tasks without having to use any sort of MCP server. Plus (add something else here)
-
-<!--
-  WRITE THIS PARAGRAPH IN YOUR OWN VOICE BEFORE SHIPPING.
-
-  2-4 sentences is plenty. Cover:
-    - the problem you actually had,
-    - why existing tools (Trello, Notion, GitHub Projects, paper) didn't fit,
-    - one specific moment that made you start.
-
-  Reviewers explicitly look for AI-written READMEs and reject them.
-  Honest beats polished — write it yourself even if it feels rough.
--->
-
-_(write this section yourself)_
+So I built this really minimal Kanban board extension for VSCode. This is also especially good because any AI's I use in my workspace will have access to my tasks without having to use any sort of MCP server. Now, for most of my hobby projects, I don't have to worry about tracking my todos or progress!!
 
 ## Features
 
 - **Drag-and-drop cards** between columns, or reorder cards inside a column.
 - **Drag entire columns** to reorder the board itself.
 - **Double-click to edit** a card's title or description in place.
-- **Toggle complete** by clicking the circle — the card dims and strikes through.
+- **Toggle complete** by clicking the circle (the card dims and strikes through).
 - **Right-click a card** to delete it from a context menu.
 - **One-click add** for cards (per column) and columns (at the end of the board).
-- **Two-way sync with `todo.md`** — edits in the kanban save to the markdown, and external edits to the markdown re-render the board.
-- **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons.
-- **Theme-aware** — pulls colours from your active VS Code theme, so it looks at home in light, dark, and high-contrast themes.
+- **Two-way sync with** `todo.md`: edits in the kanban save to the markdown, and external edits to the markdown re-render the board.
+- **Theme-aware**: pulls colours from your active VS Code theme, so it looks at home in light, dark, and high-contrast themes.
 
 ## Install
 
 ### From the VS Code Marketplace
-_Coming soon. Until it's published, use one of the options below._
+
+Bento is now published on the VSCode Marketplace!
+
+[Install Bento From Marketplace](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
+> New extensions can take a little while to appear in search. If "Bento" doesn't show up yet, use the direct link above.
 
 ### From a `.vsix` file
-1. Grab the latest `kanban-board-x.y.z.vsix` from [Releases](https://github.com/DevA-rora/kanban-board-vscode/releases).
-2. In VS Code: `Cmd/Ctrl+Shift+P` → **Extensions: Install from VSIX…** → pick the file.
+
+1. Download `bento-0.0.1.vsix` from [Releases](https://github.com/DevA-rora/kanban-board-vscode/releases/latest).
+2. In VS Code: `Cmd/Ctrl+Shift+P` → **Extensions: Install from VSIX…** → select the file.
+3. Reload VS Code if prompted.
 
 ### From source
 
@@ -65,7 +53,8 @@ Then press `F5` in VS Code to launch a dev host with the extension loaded.
 2. Run **Open Bento Board** from the command palette (`Cmd/Ctrl+Shift+P`). The extension creates a starter `todo.md` in the workspace root if one doesn't exist yet.
 3. Or open any existing `todo.md` and click the kanban icon in the editor title bar to switch from the text view.
 
-To go back to plain markdown editing, click the file-text icon in the title bar — same toggle, opposite direction.
+To go back to plain markdown editing, click the 3 dots at the top right to open the overflow menu, then select "Open as Text"
+(building in interactive toggle feature like in the "Mermaid" extension in another release...)
 
 ## The `todo.md` format
 
@@ -86,6 +75,7 @@ remember oat milk too
 ```
 
 Rules:
+
 - `# Heading` becomes a column.
 - `- [ ] task` is an open card. `- [x] task` is a completed card.
 - The line **directly after** a card (when it isn't another card or a column heading) becomes that card's description.
@@ -108,8 +98,8 @@ npm install
 npm run watch    # esbuild + tsc in watch mode
 ```
 
-Press `F5` to launch the extension dev host. Source lives in [`src/extension.ts`](src/extension.ts) (extension host) and [`media/`](media/) (webview).
+Press `F5` to launch the extension dev host. Source lives in `[src/extension.ts](src/extension.ts)` (extension host) and `[media/](media/)` (webview).
 
 ## License
 
-[MIT](LICENSE). Do whatever you want with this! (just don't blame me. :0 )
+[MIT](LICENSE). Do whatever you want with this! (just don't blame me. 😮)
