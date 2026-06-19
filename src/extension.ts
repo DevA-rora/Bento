@@ -220,17 +220,64 @@ export function activate(context: vscode.ExtensionContext) {
 					activeKanbanPanel = undefined;
 				}
 			});
-			// flag to skip re-rendering when WE are the source of the change
-			// (e.g. our own applyEdit from drag/title update). Otherwise we get a feedback loop:
-			// webview drag -> applyEdit -> doc change -> init -> webview re-render -> ...
-			let isApplyingEdit = false;
+			// skip webview re-sync for edits we apply ourselves (onDidChangeTextDocument
+			// can fire after applyEdit resolves, so a simple boolean is not enough).
+			let suppressDocumentSync = 0;
+			let editQueue: Promise<void> = Promise.resolve();
+
+			const releaseDocumentSyncSuppress = () => {
+				const step = () => {
+					suppressDocumentSync = Math.max(0, suppressDocumentSync - 1);
+				};
+				if (typeof queueMicrotask === 'function') {
+					queueMicrotask(() => queueMicrotask(step));
+				} else {
+					setTimeout(() => setTimeout(step, 0), 0);
+				}
+			};
+
+			const settle = (): Promise<void> =>
+				new Promise((resolve) => {
+					if (typeof queueMicrotask === 'function') {
+						queueMicrotask(() => queueMicrotask(resolve));
+					} else {
+						setTimeout(() => setTimeout(resolve, 0), 0);
+					}
+				});
+
+			const applyFullReplace = async (newText: string): Promise<void> => {
+				const edit = new vscode.WorkspaceEdit();
+				edit.replace(
+					document.uri,
+					new vscode.Range(0, 0, document.lineCount, 0),
+					newText
+				);
+				await vscode.workspace.applyEdit(edit);
+			};
+
+			const runDocumentMutation = (mutator: () => Promise<void>): void => {
+				// suppress from enqueue until the mutation (and its change event) settle
+				suppressDocumentSync++;
+				editQueue = editQueue
+					.then(async () => {
+						try {
+							await mutator();
+							await settle();
+						} finally {
+							releaseDocumentSyncSuppress();
+						}
+					})
+					.catch((err) => {
+						console.error('[bento] document mutation failed:', err);
+					});
+			};
 
 			// listener that watches for changes to text files in the workspace
 			// and when todo.md specifically changes, refresh the webview to show the new data.
 			// the "document" is always todo.md because of the restriction is package.json (restricted the custom editor to just that filename)
 			// so privacy! yay clapping!
 			const changeSubscription = vscode.workspace.onDidChangeTextDocument((e) => {
-				if (isApplyingEdit) {return;} // our own edit, ignore
+				if (suppressDocumentSync > 0) { return; }
 				if (e.document.uri.toString() === document.uri.toString()) {
 					const { cards, columns } = parseMarkdown(document.getText());
 					webviewPanel.webview.postMessage({ command: 'init', cards, columns });
@@ -280,151 +327,87 @@ export function activate(context: vscode.ExtensionContext) {
 
 					// when the user edits a card's title in the UI, find the card in todo.md, update it, and write the whole todo.md back to disk
 				} else if (message.command === 'updateTitle') {
-					// parse current state:
-					const { cards, columns } = parseMarkdown(document.getText());
+					runDocumentMutation(async () => {
+						const { cards, columns } = parseMarkdown(document.getText());
+						const card = cards.find(c => c.id === message.id);
+						if (!card) { return; }
+						card.title = message.newTitle;
+						await applyFullReplace(serialiseCards(cards, columns));
+					});
 
-					// find cards by ID and mutate its title:
-					const card = cards.find(c => c.id === message.id);
-					if (!card) {return;}
-					card.title = message.newTitle;
-
-					// serialise back to markdown:
-					const newText = serialiseCards(cards, columns);
-
-					// apply as a workspace edit:
-					const edit = new vscode.WorkspaceEdit();
-					edit.replace(
-						document.uri,
-						new vscode.Range(0, 0, document.lineCount, 0),
-						newText
-					);
-					isApplyingEdit = true;
-					try {
-						await vscode.workspace.applyEdit(edit);
-					} finally {
-						isApplyingEdit = false;
-					}
-
-					// same as "updateTitle", but for the card's description.
 				} else if (message.command === 'updateDescription') {
-					const { cards, columns } = parseMarkdown(document.getText());
-					const card = cards.find(c => c.id === message.id);
-					if (!card) {return;}
-					card.description = message.newDescription;
-					const newText = serialiseCards(cards, columns);
-					const edit = new vscode.WorkspaceEdit();
-					edit.replace(
-						document.uri,
-						new vscode.Range(0, 0, document.lineCount, 0),
-						newText
-					);
-					isApplyingEdit = true;
-					try {
-						await vscode.workspace.applyEdit(edit);
-					} finally {
-						isApplyingEdit = false;
-					}
+					runDocumentMutation(async () => {
+						const { cards, columns } = parseMarkdown(document.getText());
+						const card = cards.find(c => c.id === message.id);
+						if (!card) { return; }
+						card.description = message.newDescription;
+						await applyFullReplace(serialiseCards(cards, columns));
+					});
 
 					// if the user reorders the board on the UI, parse -> mutate -> serialise -> apply step
 					// but the mutation step here is a little different, becuase we send an entire new layout to the webview, so the extension
 					// needs to reconsile that against the cards it already knows about.
 				} else if (message.command === 'reorderBoard') {
-					console.log('[reorderBoard] message.columns:', JSON.stringify(message.columns));
+					runDocumentMutation(async () => {
+						console.log('[reorderBoard] message.columns:', JSON.stringify(message.columns));
 
-					// parse current state:
-					const { cards: oldCards } = parseMarkdown(document.getText());
-					console.log('[reorderBoard] oldCards count:', oldCards.length, 'ids:', oldCards.map(c => c.id));
+						const { cards: oldCards } = parseMarkdown(document.getText());
+						console.log('[reorderBoard] oldCards count:', oldCards.length, 'ids:', oldCards.map(c => c.id));
 
-					// build a lookup by id:
-					const cardLookup = new Map<number, Card>();
-					for (const card of oldCards) {
-						cardLookup.set(card.id, card);
-					}
-
-					// rebuild cards in new order:
-					const newCards: Card[] = [];
-					for (const column of message.columns) {
-						for (const cardId of column.cardIds) {
-							const card = cardLookup.get(cardId);
-							if (!card) {continue;}
-							card.column = column.name;
-							newCards.push(card);
+						const cardLookup = new Map<number, Card>();
+						for (const card of oldCards) {
+							cardLookup.set(card.id, card);
 						}
-					}
-					// pull column names from the webview's payload, in the order it sent them in:
-					const newColumns = message.columns.map((c: { name: string }) => c.name);
-					console.log('[reorderBoard] newCards count:', newCards.length, 'ids:', newCards.map(c => c.id));
-					// serialise + apply as a workspace edit
-					const newText = serialiseCards(newCards, newColumns);
-					console.log('[reorderBoard] newText:\n' + newText);
-					const edit = new vscode.WorkspaceEdit();
-					edit.replace(
-						document.uri,
-						new vscode.Range(0, 0, document.lineCount, 0),
-						newText
-					);
-					isApplyingEdit = true;
-					try {
-						await vscode.workspace.applyEdit(edit);
-					} finally {
-						isApplyingEdit = false;
-					}
 
-					// if the user toggles the completion of a card, then update the todo.md accordingly (same as "updateTitle")
+						const newCards: Card[] = [];
+						for (const column of message.columns) {
+							for (const cardId of column.cardIds) {
+								const card = cardLookup.get(cardId);
+								if (!card) { continue; }
+								card.column = column.name;
+								newCards.push(card);
+							}
+						}
+						const newColumns = message.columns.map((c: { name: string }) => c.name);
+						console.log('[reorderBoard] newCards count:', newCards.length, 'ids:', newCards.map(c => c.id));
+						const newText = serialiseCards(newCards, newColumns);
+						console.log('[reorderBoard] newText:\n' + newText);
+						await applyFullReplace(newText);
+					});
+
 				} else if (message.command === 'toggleComplete') {
-					const { cards, columns } = parseMarkdown(document.getText());
-					const card = cards.find(c => c.id === message.id);
-					if (!card) {return;}
-					card.completed = !card.completed; // flip
-					const newText = serialiseCards(cards, columns);
-					const edit = new vscode.WorkspaceEdit();
-					edit.replace(
-						document.uri,
-						new vscode.Range(0, 0, document.lineCount, 0),
-						newText
-					);
-					isApplyingEdit = true;
-					try {
-						await vscode.workspace.applyEdit(edit);
-					} finally {
-						isApplyingEdit = false;
-					}
+					runDocumentMutation(async () => {
+						const { cards, columns } = parseMarkdown(document.getText());
+						const card = cards.find(c => c.id === message.id);
+						if (!card) { return; }
+						card.completed = !card.completed;
+						await applyFullReplace(serialiseCards(cards, columns));
+					});
 
 					// if the user adds a card, update the todo.md accordingly (again, similar shape/pattern)
 				} else if (message.command === 'addCard') {
-					const { cards, columns } = parseMarkdown(document.getText());
+					runDocumentMutation(async () => {
+						const { cards, columns } = parseMarkdown(document.getText());
 
-					const newCard: Card = {
-						// ids are derived from parse position. They are stable within a single render cycle, but may change between parses (eg: after a reorder)
-						// don't persist or rely on them across operations
-						id: -1, // placeholder id, overwritten on the next parse.
-						title: "New Task",
-						column: message.column,
-						completed: false
-					};
-					cards.push(newCard);
+						const newCard: Card = {
+							// ids are derived from parse position. They are stable within a single render cycle, but may change between parses (eg: after a reorder)
+							// don't persist or rely on them across operations
+							id: -1, // placeholder id, overwritten on the next parse.
+							title: "New Task",
+							column: message.column,
+							completed: false
+						};
+						cards.push(newCard);
 
-					const newText = serialiseCards(cards, columns);
-					const edit = new vscode.WorkspaceEdit();
-					edit.replace(
-						document.uri,
-						new vscode.Range(0, 0, document.lineCount, 0),
-						newText
-					);
-					isApplyingEdit = true;
-					try {
-						await vscode.workspace.applyEdit(edit);
-					} finally {
-						isApplyingEdit = false;
-					}
+						await applyFullReplace(serialiseCards(cards, columns));
 
-					// rerender the webview to have the new card work:
-					const { cards: newCards, columns: newColumns } = parseMarkdown(document.getText());
-					webviewPanel.webview.postMessage({
-						command: 'init',
-						cards: newCards,
-						columns: newColumns,
-						focusNewInColumn: message.column
+						const { cards: newCards, columns: newColumns } = parseMarkdown(document.getText());
+						webviewPanel.webview.postMessage({
+							command: 'init',
+							cards: newCards,
+							columns: newColumns,
+							focusNewInColumn: message.column
+						});
 					});
 
 					// render add column button. / when the user adds a column, render the column.
@@ -447,46 +430,26 @@ export function activate(context: vscode.ExtensionContext) {
 					columns.push(trimmed);
 
 					const newText = serialiseCards(cards, columns);
-					const edit = new vscode.WorkspaceEdit();
-					edit.replace(
-						document.uri,
-						new vscode.Range(0, 0, document.lineCount, 0),
-						newText
-					);
-					isApplyingEdit = true;
-					try {
-						await vscode.workspace.applyEdit(edit);
-					} finally {
-						isApplyingEdit = false;
-					}
+					runDocumentMutation(async () => {
+						await applyFullReplace(newText);
 
-					// manually trigger re-render so that the new column appears in WebView:
-					const { cards: refreshedCards, columns: refreshedColumns } = parseMarkdown(document.getText());
-					webviewPanel.webview.postMessage({
-						command: 'init',
-						cards: refreshedCards,
-						columns: refreshedColumns
+						const { cards: refreshedCards, columns: refreshedColumns } = parseMarkdown(document.getText());
+						webviewPanel.webview.postMessage({
+							command: 'init',
+							cards: refreshedCards,
+							columns: refreshedColumns
+						});
 					});
 
 					// if the user deletes a card, then remove the card from todo.md
 				} else if (message.command === 'deleteCard') {
-					const { cards, columns } = parseMarkdown(document.getText());
-					const filtered = cards.filter(c => c.id !== message.id);
-					if (filtered.length === cards.length) {return;} // not found, so we can just ignore.
+					runDocumentMutation(async () => {
+						const { cards, columns } = parseMarkdown(document.getText());
+						const filtered = cards.filter(c => c.id !== message.id);
+						if (filtered.length === cards.length) { return; }
 
-					const newText = serialiseCards(filtered, columns);
-					const edit = new vscode.WorkspaceEdit();
-					edit.replace(
-						document.uri,
-						new vscode.Range(0, 0, document.lineCount, 0),
-						newText
-					);
-					isApplyingEdit = true;
-					try {
-						await vscode.workspace.applyEdit(edit);
-					} finally {
-						isApplyingEdit = false;
-					}
+						await applyFullReplace(serialiseCards(filtered, columns));
+					});
 				} else {
 					// something strange going on in the neighbourhood if ts is happening:
 					console.warn("[[bento] unknown command coming from webview:", message);

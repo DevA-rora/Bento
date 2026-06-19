@@ -3,6 +3,43 @@ const vscode = acquireVsCodeApi();
 
 let focusedCardId = null; // which card is the keyboard focused on?
 let moveKeyHeld = false; // is V being held down?
+const locallyRemovedCardIds = new Set(); // optimistic deletes pending save
+let pendingDomSignature = null; // optimistic board state waiting to be saved
+
+function getDomStateSignature() {
+    const parts = [];
+    document.querySelectorAll('.card-list').forEach((listEl) => {
+        parts.push(listEl.dataset.column);
+        listEl.querySelectorAll('.card').forEach((cardEl) => {
+            parts.push(cardEl.dataset.cardId);
+            parts.push(cardEl.classList.contains('completed') ? '1' : '0');
+            parts.push(cardEl.querySelector('h3')?.textContent.trim() ?? '');
+            parts.push(cardEl.querySelector('p.description')?.textContent.trim() ?? '');
+        });
+    });
+    return parts.join('\0');
+}
+
+function getStateSignatureFromMessage(columns, cards) {
+    const parts = [];
+    for (const col of columns) {
+        parts.push(col);
+        for (const card of cards) {
+            if (card.column === col) {
+                parts.push(String(card.id));
+                parts.push(card.completed ? '1' : '0');
+                parts.push((card.title ?? '').trim());
+                parts.push((card.description ?? '').trim());
+            }
+        }
+    }
+    return parts.join('\0');
+}
+
+function postOptimisticMutation(message) {
+    pendingDomSignature = getDomStateSignature();
+    vscode.postMessage(message);
+}
 
 // after the user finishes a drag & drop:
 // walk through the DOM
@@ -19,7 +56,7 @@ function notifyReorder() {
         columns.push({ name: name, cardIds: cardIds });
     });
     console.log('[notifyReorder] posting:', JSON.stringify(columns));
-    vscode.postMessage({ command: 'reorderBoard', columns: columns });
+    postOptimisticMutation({ command: 'reorderBoard', columns: columns });
 }
 
 // show a right-click context menu on a card
@@ -38,8 +75,7 @@ function showCardMenu(x, y, cardId, cardEl) {
     deleteBtn.className = 'context-menu-item';
     deleteBtn.textContent = 'Delete Card';
     deleteBtn.addEventListener('click', () => {
-        cardEl.remove();
-        vscode.postMessage({ command: 'deleteCard', id: cardId });
+        removeCardFromBoard(cardEl, cardId);
         menu.remove();
     });
 
@@ -79,6 +115,7 @@ function stopEditing(cardEl) {
     descEl.contentEditable = 'false';
     titleEl.blur();
     descEl.blur();
+    setFocusedCard(cardEl);
 }
 
 function scrollCardIntoView(cardEl) {
@@ -112,18 +149,20 @@ function getFocusedCardEl() {
     return document.querySelector(`.card[data-card-id="${focusedCardId}"]`);
 }
 
-function deleteFocusedCard() {
-    if (isEditing()) return;
+function removeCardFromBoard(cardEl, cardId) {
+    if (!cardEl?.isConnected) return;
 
-    const cardEl = getFocusedCardEl();
-    if (!cardEl) return;
+    locallyRemovedCardIds.add(cardId);
 
-    const cards = getCardElementsInBoardOrder();
-    const focusIndex = cards.indexOf(cardEl);
-    const id = focusedCardId;
+    const allCards = getCardElementsInBoardOrder();
+    const focusIndex = allCards.indexOf(cardEl);
+    const shouldRefocus = focusedCardId === cardId
+        || cardEl.classList.contains('keyboard-focused');
 
     cardEl.remove();
-    vscode.postMessage({ command: 'deleteCard', id });
+    postOptimisticMutation({ command: 'deleteCard', id: cardId });
+
+    if (!shouldRefocus) return;
 
     const remaining = getCardElementsInBoardOrder();
     if (remaining.length === 0) {
@@ -131,6 +170,24 @@ function deleteFocusedCard() {
     } else {
         setFocusedCard(remaining[Math.min(focusIndex, remaining.length - 1)]);
     }
+}
+
+function deleteFocusedCard() {
+    if (isEditing()) return;
+
+    const cardEl = getFocusedCardEl();
+    if (!cardEl) return;
+
+    removeCardFromBoard(cardEl, focusedCardId);
+}
+
+function getFocusedColumnId() {
+    const cardEl = getFocusedCardEl();
+    return cardEl?.closest('.card-list')?.dataset.column ?? null;
+}
+
+function addCardToColumn(columnId) {
+    vscode.postMessage({ command: 'addCard', column: columnId });
 }
 
 function isEditing() {
@@ -198,32 +255,41 @@ function navigateFocus(cardEl, key) {
     }
 }
 
+function moveCardToColumn(cardEl, targetList, targetRowIdx) {
+    const targetCards = [...targetList.querySelectorAll('.card')];
+    const insertBefore = targetCards[targetRowIdx] ?? null;
+    if (insertBefore) {
+        targetList.insertBefore(cardEl, insertBefore);
+    } else {
+        targetList.appendChild(cardEl);
+    }
+}
+
 function moveCard(cardEl, key) {
+    const lists = getColumnCardLists();
+    const { colIdx, rowIdx } = getCardPosition(cardEl);
     const listEl = cardEl.closest('.card-list');
     if (!listEl) return;
 
-    const siblings = [...listEl.querySelectorAll('.card')];
-    const i = siblings.indexOf(cardEl);
-
-    if (key === 'ArrowUp' || key === 'ArrowLeft') {
+    if (key === 'ArrowUp') {
+        const siblings = [...listEl.querySelectorAll('.card')];
+        const i = siblings.indexOf(cardEl);
         if (i > 0) {
             listEl.insertBefore(cardEl, siblings[i - 1]);
-        } else {
-            const prevCol = listEl.closest('.column')?.previousElementSibling;
-            const prevList = prevCol?.classList.contains('column')
-                ? prevCol.querySelector('.card-list')
-                : null;
-            if (prevList) prevList.appendChild(cardEl);
         }
-    } else if (key === 'ArrowDown' || key === 'ArrowRight') {
+    } else if (key === 'ArrowDown') {
+        const siblings = [...listEl.querySelectorAll('.card')];
+        const i = siblings.indexOf(cardEl);
         if (i < siblings.length - 1) {
             listEl.insertBefore(siblings[i + 1], cardEl);
-        } else {
-            const nextCol = listEl.closest('.column')?.nextElementSibling;
-            const nextList = nextCol?.classList.contains('column')
-                ? nextCol.querySelector('.card-list')
-                : null;
-            if (nextList) nextList.insertBefore(cardEl, nextList.firstChild);
+        }
+    } else if (key === 'ArrowLeft') {
+        if (colIdx > 0) {
+            moveCardToColumn(cardEl, lists[colIdx - 1], rowIdx);
+        }
+    } else if (key === 'ArrowRight') {
+        if (colIdx < lists.length - 1) {
+            moveCardToColumn(cardEl, lists[colIdx + 1], rowIdx);
         }
     }
 
@@ -277,10 +343,7 @@ function renderCards(cards, columns) {
         addBtn.type = 'button';
         addBtn.textContent = "+ Add Card";
         addBtn.addEventListener('click', () => {
-            vscode.postMessage({
-                command: 'addCard',
-                column: columnId
-            });
+            addCardToColumn(columnId);
         });
         colEl.appendChild(addBtn);
 
@@ -328,7 +391,7 @@ function renderCards(cards, columns) {
         titleEl.addEventListener('blur', () => {
             const newTitle = titleEl.textContent.trim();
             if (newTitle !== card.title) {
-                vscode.postMessage({
+                postOptimisticMutation({
                     command: 'updateTitle',
                     id: card.id,
                     newTitle: newTitle
@@ -368,7 +431,7 @@ function renderCards(cards, columns) {
         descEl.addEventListener('blur', () => {
             const newDescription = descEl.textContent.trim();
             if (newDescription !== (card.description || '')) {
-                vscode.postMessage({
+                postOptimisticMutation({
                     command: 'updateDescription',
                     id: card.id,
                     newDescription: newDescription
@@ -376,27 +439,11 @@ function renderCards(cards, columns) {
             }
         });
 
-        // when enter is clicked, "unfocus" the card.
-        titleEl.addEventListener('keydown', (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                titleEl.blur();
-            }
-        });
-
-        // when enter is clicked, "unfocus" the card.
-        descEl.addEventListener('keydown', (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                descEl.blur();
-            }
-        });
-
         checkEl.addEventListener('click', () => {
             // flip visual state instantly, to give the "illusion" that the WebView is actually fast:
             cardEl.classList.toggle('completed');
 
-            vscode.postMessage({
+            postOptimisticMutation({
                 command: 'toggleComplete',
                 id: card.id
             })
@@ -452,7 +499,7 @@ document.addEventListener('keydown', (e) => {
             }
             scrollCardIntoView(cardEl);
         }
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' || e.key === 'Enter') {
             e.preventDefault();
             stopEditing(getFocusedCardEl());
         }
@@ -487,13 +534,20 @@ document.addEventListener('keydown', (e) => {
     if (e.key === ' ' && cardEl) {
         e.preventDefault();
         cardEl.classList.toggle('completed');
-        vscode.postMessage({ command: 'toggleComplete', id: focusedCardId });
+        postOptimisticMutation({ command: 'toggleComplete', id: focusedCardId });
         return;
     }
 
     if (e.key === 'Enter' && cardEl) {
         e.preventDefault();
         startEditing(cardEl);
+        return;
+    }
+
+    if (e.key === 'n' && cardEl) {
+        e.preventDefault();
+        const column = getFocusedColumnId();
+        if (column) addCardToColumn(column);
         return;
     }
 
@@ -527,8 +581,38 @@ window.addEventListener('message', (event) => {
         console.log('[init] columns:', JSON.stringify(message.columns), 'cardCount:', message.cards.length);
         console.log('[init] cards:', JSON.stringify(message.cards));
 
+        for (const id of [...locallyRemovedCardIds]) {
+            if (!message.cards.some(c => c.id === id)) {
+                locallyRemovedCardIds.delete(id);
+            }
+        }
+
+        const filteredCards = message.cards.filter(c => !locallyRemovedCardIds.has(c.id));
+
+        if (pendingDomSignature && !message.focusNewInColumn) {
+            const domSig = getDomStateSignature();
+            const incomingSig = getStateSignatureFromMessage(message.columns, filteredCards);
+
+            if (domSig === pendingDomSignature && incomingSig !== pendingDomSignature) {
+                console.log('[init] skipping stale re-render (DOM ahead of document)');
+                return;
+            }
+            if (incomingSig === pendingDomSignature) {
+                pendingDomSignature = null;
+            }
+        }
+
+        // after an optimistic delete the DOM is already correct — skip stale re-renders
+        // (e.g. from Cmd+S or a document change that raced ahead of the save).
+        if (locallyRemovedCardIds.size > 0 && !message.focusNewInColumn) {
+            const domCount = getCardElementsInBoardOrder().length;
+            if (filteredCards.length === domCount) {
+                return;
+            }
+        }
+
         // render the cards on WebView
-        renderCards(message.cards, message.columns);
+        renderCards(filteredCards, message.columns);
 
         // if the extension told us to auto-edit a new card, then do it now:
         if (message.focusNewInColumn) {

@@ -43,8 +43,12 @@
 - [x] Stress Testing / Bug fixes (get ready for shipping)
 - [x] You can't see the focused card sometimes (there are bugs & stuff) (don't know what causes it...)
 - [x] Fix long description bug
+- [x] Test different colour themes
+- [x] Fix card deletion bug (not instantanous sync)
+- [x] Add new keyboard shortcut "n" to make a new card. 
 
 # Doing
+- [ ] Polishing & testing...
 
 # Todo
 - [ ] Test the fresh-clone install flow end-to-end
