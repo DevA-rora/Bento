@@ -1,16 +1,16 @@
 # 🍱 Bento: A Kanban Board for VS Code
 
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Marketplace-Install-007ACC?logo=visualstudiocode)](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
-[![Version](https://img.shields.io/badge/version-0.0.2-blue)](https://github.com/DevA-rora/kanban-board-vscode/releases)
+[![Version](https://img.shields.io/badge/version-0.0.2-blue)](https://github.com/DevA-rora/Bento/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Last commit](https://img.shields.io/github/last-commit/DevA-rora/kanban-board-vscode)
+![Last commit](https://img.shields.io/github/last-commit/DevA-rora/Bento)
 [![Roadmap](https://img.shields.io/badge/roadmap-13%2F18%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
 
 > A Kanban Board built into VS Code. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
-![Bento kanban board in VS Code showing drag-and-drop, task editing, completion toggles, and theme compatibility](https://github.com/DevA-rora/kanban-board-vscode/raw/main/assets/bento_demo_v1.gif)
-![Example of todo.md rendered as a Bento kanban board](https://github.com/DevA-rora/kanban-board-vscode/raw/main/assets/screenshot_1.png)
-![Changing themes updates Bento board](https://github.com/DevA-rora/kanban-board-vscode/raw/main/assets/screenshot_2.png)
+![Bento kanban board in VS Code showing drag-and-drop, task editing, completion toggles, and theme compatibility](https://github.com/DevA-rora/Bento/raw/main/assets/bento_demo_v1.gif)
+![Example of todo.md rendered as a Bento kanban board](https://github.com/DevA-rora/Bento/raw/main/assets/screenshot_1.png)
+![Changing themes updates Bento board](https://github.com/DevA-rora/Bento/raw/main/assets/screenshot_2.png)
 
 ## Why I built this
 
@@ -45,15 +45,15 @@ Bento is now published on the VS Code Marketplace!
 
 ### From a `.vsix` file
 
-1. Download `bento-0.0.2.vsix` from [Releases](https://github.com/DevA-rora/kanban-board-vscode/releases/latest).
+1. Download `bento-0.0.2.vsix` from [Releases](https://github.com/DevA-rora/Bento/releases/latest).
 2. In VS Code: `Cmd/Ctrl+Shift+P` → **Extensions: Install from VSIX…** → select the file.
 3. Reload VS Code if prompted.
 
 ### From source
 
 ```bash
-git clone https://github.com/DevA-rora/kanban-board-vscode
-cd kanban-board-vscode
+git clone https://github.com/DevA-rora/Bento
+cd Bento
 npm install
 npm run package
 ```
@@ -167,4 +167,4 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 - [ ] **Macondo ship**: submit for review on [macondo.hackclub.com](https://macondo.hackclub.com).
 
 ### Out of scope (by design)
-Bento stays minimal — plain `todo.md`, no extra syntax in the file. Not planning due dates, labels, card colours, or a separate landing page; the README and Marketplace listing are the product page. Optional later: a short demo video.
+Bento stays minimal. Plain `todo.md`, no extra syntax in the file. Not planning due dates, labels, card colours, or a separate landing page; the README and Marketplace listing are the product page.

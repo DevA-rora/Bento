@@ -6,9 +6,9 @@
   "description": "A VS Code Kanban Board to manage tasks for your projects!",
   "author": "Dev Arora",
   "license": "MIT",
-  "homepage": "https://github.com/DevA-rora/kanban-board-vscode#readme",
+  "homepage": "https://github.com/DevA-rora/Bento#readme",
   "bugs": {
-    "url": "https://github.com/DevA-rora/kanban-board-vscode/issues"
+    "url": "https://github.com/DevA-rora/Bento/issues"
   },
   "version": "0.0.2",
   "engines": {
@@ -26,7 +26,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/DevA-rora/kanban-board-vscode.git"
+    "url": "https://github.com/DevA-rora/Bento.git"
   },
   "activationEvents": [],
   "main": "./dist/extension.js",

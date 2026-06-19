@@ -49,6 +49,6 @@ First public release on the [VS Code Marketplace](https://marketplace.visualstud
 - New card exiting edit mode immediately (VS Code auto-save race).
 - Drag-and-drop into empty columns (SortableJS configuration).
 
-[Unreleased]: https://github.com/DevA-rora/kanban-board-vscode/compare/v0.0.2...HEAD
-[0.0.2]: https://github.com/DevA-rora/kanban-board-vscode/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/DevA-rora/kanban-board-vscode/releases/tag/v0.0.1
+[Unreleased]: https://github.com/DevA-rora/Bento/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/DevA-rora/Bento/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/DevA-rora/Bento/releases/tag/v0.0.1
