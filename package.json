@@ -1,6 +1,7 @@
 {
   "name": "bento",
   "publisher": "DevArora",
+  "icon": "media/icon.png",
   "displayName": "Bento",
   "description": "A VS Code Kanban Board to manage tasks for your projects!",
   "author": "Dev Arora",

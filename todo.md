@@ -32,31 +32,25 @@
 - [x] Static screenshots (2-3 PNGS alongside GIF)
 - [x] Capture a demo GIF and 2-3 screenshots
 - [x] Add keyboard shortcuts in script.js webview (arrows, space, enter, tab, escape, v+arrow move, delete)
+- [x] Write a real CHANGELOG.md
+- [x] Make styles theme-aware with VSCode CSS variables
+- [x] Add empty-state UI when todo.md has no columns
+- [x] Add GitHub repo topics + pin it to your profile
+- [x] Build a 7-14 day project streak before submitting
+- [x] Design a 128x128 extension icon (PNG)
 
 # Doing
 
 # Todo 
-- [ ] Design a 128x128 extension icon (PNG)
-Save as media/icon.png and reference via "icon": "media/icon.png" in package.json. Required for marketplace and a huge polish signal. Even a clean monochrome glyph works — log the design hours via a journal entry (not Hackatime, since it's not editor work).
+
 - [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
 - [ ] Test the fresh-clone install flow end-to-end
 rm -rf node_modules dist, then npm install, npm run package, F5 launch, open a todo.md, verify every feature. If a stranger can't follow your README to a working extension, neither can a reviewer.
-- [ ] Markplace search screenshot (once it becomes visible!!!)
 
 # Backlog (Polish — Starfruit Hunt)
+- [ ] Markplace search screenshot (once it becomes visible!!!)
 - [ ] Stress Testing / Bug fixes (get ready for shipping)
 Try: empty todo.md, todo.md with no columns, weird unicode in titles, very long descriptions, 50+ cards in one column, rapid drag-drop spam.
-- [ ] Make styles theme-aware with VSCode CSS variables
-Replace hardcoded #2d2d2d, #444, #888, #007acc with var(--vscode-editor-background), var(--vscode-foreground), var(--vscode-focusBorder), var(--vscode-list-hoverBackground), etc. Test with a light theme — currently your board is unreadable on light mode. Reviewers see this instantly.
-- [ ] Write a real CHANGELOG.md
-Drop "Initial release" placeholder. Add ## [0.1.0] - YYYY-MM-DD with sections: Added (the features), Fixed (duplication bug, drag-into-empty-column, autosave-cancels-edit), Tweaked. Follow keepachangelog.com format.
-- [ ] Add empty-state UI when todo.md has no columns
-Right now the board renders blank with no hint. Add a "Click + Add Column to get started" message. Small UX win, big polish signal.
-e.g. Cmd+Enter to toggle complete on focused card, Delete to delete focused card. Power-user feature, low effort.
-- [ ] Add GitHub repo topics + pin it to your profile
-Repo settings -> About -> Topics: vscode-extension, kanban, productivity, todo, markdown, custom-editor. Pin from your GitHub profile (Customize your pins button). Per the shipping docs, this is one of the explicit checklist items.
-- [ ] Build a 7-14 day project streak before submitting
-+1% gold per consecutive day, snapshotted at ship time. 14 consecutive days of >=1hr Hackatime time on this project = 1.14x multiplier on EVERY hour you've ever logged. Buy streak freezes from the shop later to protect long streaks.
 - [ ] Submit the ship on macondo.hackclub.com
 URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
 
