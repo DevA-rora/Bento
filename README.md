@@ -38,10 +38,14 @@ So I built this really minimal Kanban board extension for VS Code. This is also 
 
 ### From the VS Code Marketplace
 
+![Bento Marketplace](assets/bento_marketplace.png)
+
 Bento is now published on the VS Code Marketplace!
 
-[Install Bento From Marketplace](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
-> New extensions can take a little while to appear in search. If "Bento" doesn't show up yet, use the direct link above.
+To instally, simply search for the "Bento" extension in your VS Code extensions mangager.
+
+You can alternatively use the direct link here: [Install Bento From Marketplace](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
+> Note that this extension will NOT show up on open-source VS Code forks like VSCodium or Cursor. They will show up once I publish the package on the "Open VSC Registery" (coming soon!)
 
 ### From a `.vsix` file
 
@@ -64,17 +68,18 @@ Then open the "extension.ts" file and press `F5` in VS Code to launch a dev host
 
 1. Open a folder in VS Code.
 2. Run **Open Bento Board** from the command palette (`Cmd/Ctrl+Shift+P`). The extension creates a starter `todo.md` in the workspace root if one doesn't exist yet.
-3. Or open any existing `todo.md` and click the kanban icon in the editor title bar to switch from the text view.
+3. Or open any existing `todo.md` and click the **Bento icon** in the editor title bar to switch from the text view to the kanban board.
 
-To go back to plain markdown editing, click the 3 dots at the top right to open the overflow menu, then select "Open as Text"
+To go back to plain markdown editing, click the **file-text icon** in the same title bar.
 
 ## Commands
 
 | Command | What it does | How to run |
 | --- | --- | --- |
 | **Open Bento Board** | Creates or opens `todo.md` in the kanban view | Command Palette (`Cmd/Ctrl+Shift+P`) |
-| **Open as Bento** | Switches from markdown text to the kanban board | Title bar checklist icon on `todo.md` |
-| **Open as Text** | Switches from the kanban board back to markdown | Title bar file-text icon, or editor **⋯** menu |
+| **Open as Bento** | Switches from markdown text to the kanban board | Title bar Bento icon on `todo.md` |
+| **Open as Text** | Switches from the kanban board back to markdown | Title bar file-text icon on `todo.md` |
+| **Delete Focused Card** | Removes the card that currently has keyboard focus | **Delete** key in kanban view (click a card first), or Command Palette |
 
 ## Keyboard shortcuts
 
@@ -158,12 +163,13 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 - [x] **Demo assets**: GIF and screenshots in the README.
 - [x] **Docs**: README, CHANGELOG, and MIT license.
 - [x] **VS Code Marketplace**: [published and installable](https://marketplace.visualstudio.com/items?itemName=DevArora.bento).
+- [x] **Marketplace search screenshot**: once Bento shows up in search.
 
 ### Next up
-- [ ] **Toolbar toggle**: flip between kanban and markdown from the editor title bar (like Mermaid).
+- [x] **Toolbar toggle**: flip between kanban and markdown from the editor title bar (like Mermaid).
 - [ ] **Fresh-clone test**: verify someone can clone, build, and run from the README alone.
 - [ ] **Stress testing**: empty files, no columns, unicode, long text, 50+ cards, rapid drag-drop.
-- [ ] **Marketplace search screenshot**: once Bento shows up in search.
+- [ ] Publish to the "Open VSX Registery" [here](https://open-vsx.org/) to view the extension on open-source forks of VS Code.
 - [ ] **Macondo ship**: submit for review on [macondo.hackclub.com](https://macondo.hackclub.com).
 
 ### Out of scope (by design)

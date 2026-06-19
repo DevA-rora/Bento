@@ -107,24 +107,92 @@ function serialiseCards(cards: Card[], columns: string[]): string {
 	return lines.join('\n');
 }
 
+function getEditorResourceUri(uri?: vscode.Uri): vscode.Uri | undefined {
+	if (uri) {
+		return uri;
+	}
+
+	const activeEditor = vscode.window.activeTextEditor;
+	if (activeEditor) {
+		return activeEditor.document.uri;
+	}
+
+	const activeTab = vscode.window.tabGroups.activeTabGroup.activeTab;
+	if (activeTab?.input instanceof vscode.TabInputCustom) {
+		return activeTab.input.uri;
+	}
+
+	return undefined;
+}
+
+function isTodoMarkdownUri(uri: vscode.Uri): boolean {
+	return uri.scheme === 'file' && path.basename(uri.fsPath) === 'todo.md';
+}
+
+function syncToolbarContext(): void {
+	const activeTab = vscode.window.tabGroups.activeTabGroup.activeTab;
+
+	if (activeTab?.input instanceof vscode.TabInputCustom) {
+		const isKanban =
+			activeTab.input.viewType === 'bento.editor' &&
+			isTodoMarkdownUri(activeTab.input.uri);
+		void vscode.commands.executeCommand('setContext', 'bento.kanbanEditor', isKanban);
+		void vscode.commands.executeCommand('setContext', 'bento.todoMarkdownEditor', false);
+		return;
+	}
+
+	const editor = vscode.window.activeTextEditor;
+	const isTodoMarkdown =
+		!!editor &&
+		editor.document.languageId === 'markdown' &&
+		isTodoMarkdownUri(editor.document.uri);
+
+	void vscode.commands.executeCommand('setContext', 'bento.todoMarkdownEditor', isTodoMarkdown);
+	void vscode.commands.executeCommand('setContext', 'bento.kanbanEditor', false);
+}
+
+// active kanban webview panel (for commands that target the focused card)
+let activeKanbanPanel: vscode.WebviewPanel | undefined;
+
 // this is like "main" in python.
 export function activate(context: vscode.ExtensionContext) {
+	syncToolbarContext();
+	context.subscriptions.push(
+		vscode.window.onDidChangeActiveTextEditor(syncToolbarContext),
+		vscode.window.tabGroups.onDidChangeTabs(syncToolbarContext),
+	);
 
-	// register a VSCode command named "kanban-openAsKanban".
-	// a "command" in VSCode is a named action that can be triggered from menus (command palette, keyboard shortcuts, or other code.)
-	// we have to do this, this is just how VSCode extensions work...
 	const openAsKanban = vscode.commands.registerCommand(
 		'bento.openAsKanban',
-		(uri: vscode.Uri) => {
-			vscode.commands.executeCommand('vscode.openWith', uri, 'bento.editor');
+		async (uri?: vscode.Uri) => {
+			const targetUri = getEditorResourceUri(uri);
+			if (!targetUri) {
+				return;
+			}
+
+			await vscode.commands.executeCommand(
+				'vscode.openWith',
+				targetUri,
+				'bento.editor',
+				{ preview: false, viewColumn: vscode.ViewColumn.Active }
+			);
 		}
 	);
 
-	// register VSCode command "bento.openAsText"
 	const openAsText = vscode.commands.registerCommand(
 		'bento.openAsText',
-		(uri: vscode.Uri) => {
-			vscode.commands.executeCommand('vscode.openWith', uri, 'default');
+		async (uri?: vscode.Uri) => {
+			const targetUri = getEditorResourceUri(uri);
+			if (!targetUri) {
+				return;
+			}
+
+			await vscode.commands.executeCommand(
+				'vscode.openWith',
+				targetUri,
+				'default',
+				{ preview: false, viewColumn: vscode.ViewColumn.Active }
+			);
 		}
 	);
 	// "when my extension shuts down, dispose of these two command regristrations for me"
@@ -137,6 +205,21 @@ export function activate(context: vscode.ExtensionContext) {
 	const kanbanProvider: vscode.CustomTextEditorProvider = {
 		// this function setups everything the Kanban view needs whenever the user opens todo.md
 		resolveCustomTextEditor(document, webviewPanel, token) {
+			syncToolbarContext();
+			if (webviewPanel.active) {
+				activeKanbanPanel = webviewPanel;
+			}
+			webviewPanel.onDidChangeViewState(() => {
+				if (webviewPanel.active) {
+					activeKanbanPanel = webviewPanel;
+					syncToolbarContext();
+				}
+			});
+			webviewPanel.onDidDispose(() => {
+				if (activeKanbanPanel === webviewPanel) {
+					activeKanbanPanel = undefined;
+				}
+			});
 			// flag to skip re-rendering when WE are the source of the change
 			// (e.g. our own applyEdit from drag/title update). Otherwise we get a feedback loop:
 			// webview drag -> applyEdit -> doc change -> init -> webview re-render -> ...
@@ -418,6 +501,10 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 	context.subscriptions.push(editorRegistration);
 
+	const deleteFocusedCard = vscode.commands.registerCommand('bento.deleteFocusedCard', () => {
+		activeKanbanPanel?.webview.postMessage({ command: 'deleteFocusedCard' });
+	});
+
 	// entry point the user can invoke from the command palette (zero-context trigger)
 	const boardDisposable = vscode.commands.registerCommand('bento.openBoard', () => {
 		// find the workspace
@@ -450,7 +537,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	// when extension stops, clean things up (deregister the command from the command pallette, free internal handles, ect)
-	context.subscriptions.push(boardDisposable);
+	context.subscriptions.push(boardDisposable, deleteFocusedCard);
 
 }
 

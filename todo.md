@@ -38,17 +38,13 @@
 - [x] Add GitHub repo topics + pin it to your profile
 - [x] Build a 7-14 day project streak before submitting
 - [x] Design a 128x128 extension icon (PNG)
+- [x] Markplace search screenshot (once it becomes visible!!!)
+- [x] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
 
-# Doing
-- [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
-
-# Todo 
+# Todo
 - [ ] Test the fresh-clone install flow end-to-end
 rm -rf node_modules dist, then npm install, npm run package, F5 launch, open a todo.md, verify every feature. If a stranger can't follow your README to a working extension, neither can a reviewer.
 - [ ] Stress Testing / Bug fixes (get ready for shipping)
 Try: empty todo.md, todo.md with no columns, weird unicode in titles, very long descriptions, 50+ cards in one column, rapid drag-drop spam.
-- [ ] Deploy a landing page on Nest with a .dino.icu subdomain
-Free per Macondo. hackclub.app for the VPS, github.com/hackclub/dns PR for the domain. One static page with logo, GIF, install button, install commands, GitHub link. Takes ~30 minutes, reads as "real product".
 - [ ] Submit the ship on macondo.hackclub.com
 URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
-- [ ] Markplace search screenshot (once it becomes visible!!!)

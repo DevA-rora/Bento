@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
+### Added
 
-- Title-bar toggle between kanban and markdown views.
+- Title-bar toggle between kanban and markdown views: branded Bento icon on `todo.md` swaps the same tab to the board; file-text icon swaps back.
+- Dynamic toolbar visibility via `setContext` so the toggle reliably appears on `todo.md` (fixes when-clause issues with dotted filenames).
+
+### Planned
 - Extension icon for the Marketplace listing.
 - Empty-state UI when `todo.md` has no columns.
 - Light-theme styling via VS Code CSS variables.

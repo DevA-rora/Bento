@@ -28,7 +28,9 @@
     "type": "git",
     "url": "https://github.com/DevA-rora/Bento.git"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -44,7 +46,21 @@
       {
         "command": "bento.openAsKanban",
         "title": "Open as Bento",
-        "icon": "$(checklist)"
+        "icon": {
+          "light": "media/bento-toolbar-light.svg",
+          "dark": "media/bento-toolbar-dark.svg"
+        }
+      },
+      {
+        "command": "bento.deleteFocusedCard",
+        "title": "Delete Focused Card"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "bento.deleteFocusedCard",
+        "key": "delete",
+        "when": "bento.kanbanEditor"
       }
     ],
     "customEditors": [
@@ -73,13 +89,25 @@
       "editor/title": [
         {
           "command": "bento.openAsKanban",
-          "when": "resourceFilename == 'todo.md' && !activeCustomEditorId",
-          "group": "navigation"
+          "when": "bento.todoMarkdownEditor",
+          "group": "navigation@1"
         },
         {
           "command": "bento.openAsText",
-          "when": "resourceFilename == 'todo.md' && activeCustomEditorId == 'bento.editor'",
-          "group": "navigation"
+          "when": "bento.kanbanEditor",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "bento.openAsKanban",
+          "when": "bento.todoMarkdownEditor",
+          "group": "navigation@1"
+        },
+        {
+          "command": "bento.openAsText",
+          "when": "bento.kanbanEditor",
+          "group": "navigation@1"
         }
       ]
     }

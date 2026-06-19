@@ -87,6 +87,7 @@ function setFocusedCard(cardEl) {
         cardEl.classList.add('keyboard-focused');
         focusedCardId = Number(cardEl.dataset.cardId);
         cardEl.scrollIntoView({ block: 'nearest' });
+        document.querySelector('.board')?.focus({ preventScroll: true });
     } else {
         focusedCardId = null;
     }
@@ -95,6 +96,27 @@ function setFocusedCard(cardEl) {
 function getFocusedCardEl() {
     if (focusedCardId == null) return null;
     return document.querySelector(`.card[data-card-id="${focusedCardId}"]`);
+}
+
+function deleteFocusedCard() {
+    if (isEditing()) return;
+
+    const cardEl = getFocusedCardEl();
+    if (!cardEl) return;
+
+    const cards = getCardElementsInBoardOrder();
+    const focusIndex = cards.indexOf(cardEl);
+    const id = focusedCardId;
+
+    cardEl.remove();
+    vscode.postMessage({ command: 'deleteCard', id });
+
+    const remaining = getCardElementsInBoardOrder();
+    if (remaining.length === 0) {
+        setFocusedCard(null);
+    } else {
+        setFocusedCard(remaining[Math.min(focusIndex, remaining.length - 1)]);
+    }
 }
 
 function isEditing() {
@@ -412,15 +434,8 @@ document.addEventListener('keydown', (e) => {
 
     if ((e.key === 'Delete' || e.key === 'Backspace') && cardEl) {
         e.preventDefault();
-        const focusIndex = index;
-        cardEl.remove();
-        vscode.postMessage({ command: 'deleteCard', id: focusedCardId });
-        const remaining = getCardElementsInBoardOrder();
-        if (remaining.length === 0) {
-            setFocusedCard(null);
-        } else {
-            setFocusedCard(remaining[Math.min(focusIndex, remaining.length - 1)]);
-        }
+        deleteFocusedCard();
+        return;
     }
 });
 
@@ -431,7 +446,9 @@ document.addEventListener('keyup', (e) => {
 // listener function
 window.addEventListener('message', (event) => {
     const message = event.data;
-    if (message.command == 'init') {
+    if (message.command === 'deleteFocusedCard') {
+        deleteFocusedCard();
+    } else if (message.command == 'init') {
 
         // skip re-render while user is editing their card (otherwise autosave event wipes typing)
         const activeEl = document.activeElement;
