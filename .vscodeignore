@@ -8,7 +8,11 @@ src/**
 esbuild.js
 vsc-extension-quickstart.md
 **/tsconfig.json
+**/tsconfig.webview.json
 **/eslint.config.mjs
 **/*.map
 **/*.ts
 **/.vscode-test.*
+assets/**
+macondo_docs/**
+todo.md

@@ -8,9 +8,9 @@
 
 > A Kanban Board built into VS Code. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
-![Bento kanban board in VS Code showing drag-and-drop, task editing, completion toggles, and theme compatibility](assets/bento_demo_v1.gif)
-![Example of todo.md rendered as a Bento kanban board](assets/screenshot_1.png)
-![Changing themes updates Bento board](assets/screenshot_2.png)
+![Bento kanban board in VS Code showing drag-and-drop, task editing, completion toggles, and theme compatibility](https://github.com/DevA-rora/kanban-board-vscode/raw/main/assets/bento_demo_v1.gif)
+![Example of todo.md rendered as a Bento kanban board](https://github.com/DevA-rora/kanban-board-vscode/raw/main/assets/screenshot_1.png)
+![Changing themes updates Bento board](https://github.com/DevA-rora/kanban-board-vscode/raw/main/assets/screenshot_2.png)
 
 ## Why I built this
 
@@ -45,7 +45,7 @@ Bento is now published on the VS Code Marketplace!
 
 ### From a `.vsix` file
 
-1. Download `bento-0.0.1.vsix` from [Releases](https://github.com/DevA-rora/kanban-board-vscode/releases/latest).
+1. Download `bento-0.0.2.vsix` from [Releases](https://github.com/DevA-rora/kanban-board-vscode/releases/latest).
 2. In VS Code: `Cmd/Ctrl+Shift+P` → **Extensions: Install from VSIX…** → select the file.
 3. Reload VS Code if prompted.
 

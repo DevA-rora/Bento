@@ -42,7 +42,6 @@
 # Doing
 
 # Todo 
-
 - [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
 - [ ] Test the fresh-clone install flow end-to-end
 rm -rf node_modules dist, then npm install, npm run package, F5 launch, open a todo.md, verify every feature. If a stranger can't follow your README to a working extension, neither can a reviewer.
@@ -57,11 +56,8 @@ URL field = GitHub repo (or marketplace listing if published). Pick level L2 min
 # Todo (Innovation — Above & Beyond) --> Try to get that startfuit!!!
 - [ ] Deploy a landing page on Nest with a .dino.icu subdomain
 Free per Macondo. hackclub.app for the VPS, github.com/hackclub/dns PR for the domain. One static page with logo, GIF, install button, install commands, GitHub link. Takes ~30 minutes, reads as "real product".
-- [ ] Record a 60-90s walkthrough video and post it
 YouTube unlisted is fine. Show the problem (todo.md is fine but visual kanban is faster), then the solution. Drop the link in the README and your project page. Optional: post to r/vscode or r/programming for some shipping juice.
 - [ ] Add a "due date" badge syntax to todo.md
 Parse e.g. "- [ ] Buy milk @2026-08-15" into a card with a small date pill. Keeps the markdown human-readable but adds a visible feature. Bidirectional sync still works because you control the parser.
 - [ ] Add card colours / labels via emoji or tag syntax
 e.g. lines starting with #urgent or :red: render a coloured stripe. Differentiator vs every other todo extension on the marketplace.
-- [ ] Write a Macondo journal entry telling the project's story
-Optional for software per the FAQ, but it dramatically helps reviewers and is a vibe boost for starfruit. Cover: why you started, the duplication bug saga, the autosave-cancels-edit fix, the sortableJS empty-column fix, what you'd build next.
