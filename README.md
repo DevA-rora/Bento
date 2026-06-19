@@ -1,14 +1,16 @@
 # 🍱 Bento: A Kanban Board for VS Code
 
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Marketplace-Install-007ACC?logo=visualstudiocode)](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
-[![Version](https://img.shields.io/badge/version-0.0.1-blue)](https://github.com/DevA-rora/kanban-board-vscode/releases)
+[![Version](https://img.shields.io/badge/version-0.0.2-blue)](https://github.com/DevA-rora/kanban-board-vscode/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Last commit](https://img.shields.io/github/last-commit/DevA-rora/kanban-board-vscode)
-[![Roadmap](https://img.shields.io/badge/roadmap-7%2F20%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
+[![Roadmap](https://img.shields.io/badge/roadmap-8%2F20%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
 
 > A Kanban Board built into VS Code. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
 ![Bento kanban board in VS Code showing drag-and-drop, task editing, completion toggles, and theme compatibility](assets/bento_demo_v1.gif)
+![Example of todo.md rendered as a Bento kanban board](assets/screenshot_1.png)
+![Changing themes updates Bento board](assets/screenshot_2.png)
 
 ## Why I built this
 
@@ -26,6 +28,11 @@ So I built this really minimal Kanban board extension for VS Code. This is also 
 - **One-click add** for cards (per column) and columns (at the end of the board).
 - **Two-way sync with** `todo.md`: edits in the kanban save to the markdown, and external edits to the markdown re-render the board.
 - **Theme-aware**: pulls colours from your active VS Code theme, so it looks at home in light, dark, and high-contrast themes.
+- **Keyboard shortcuts**: navigate, edit, complete, move, and delete cards without touching the mouse (click a card first to focus it).
+
+## Requirements
+- [VS Code](https://code.visualstudio.com) 1.90 or newer.
+- A workspace with a `todo.md` file (or run **Open Bento Board** to create one)
 
 ## Install
 
@@ -51,7 +58,7 @@ npm install
 npm run package
 ```
 
-Then press `F5` in VS Code to launch a dev host with the extension loaded.
+Then open the "extension.ts" file and press `F5` in VS Code to launch a dev host with the extension loaded.
 
 ## Usage
 
@@ -60,6 +67,28 @@ Then press `F5` in VS Code to launch a dev host with the extension loaded.
 3. Or open any existing `todo.md` and click the kanban icon in the editor title bar to switch from the text view.
 
 To go back to plain markdown editing, click the 3 dots at the top right to open the overflow menu, then select "Open as Text"
+
+## Commands
+
+| Command | What it does | How to run |
+| --- | --- | --- |
+| **Open Bento Board** | Creates or opens `todo.md` in the kanban view | Command Palette (`Cmd/Ctrl+Shift+P`) |
+| **Open as Bento** | Switches from markdown text to the kanban board | Title bar checklist icon on `todo.md` |
+| **Open as Text** | Switches from the kanban board back to markdown | Title bar file-text icon, or editor **⋯** menu |
+
+## Keyboard shortcuts
+
+Click a card to focus it first. Shortcuts work in the kanban webview (not VS Code's global keybindings).
+
+| Key | Action |
+| --- | --- |
+| **↑** / **↓** / **←** / **→** | Move focus between cards (left-to-right, top-to-bottom) |
+| **Space** | Toggle complete on the focused card |
+| **Enter** | Start editing title & description |
+| **Tab** / **Shift+Tab** | Switch between title and description while editing |
+| **Escape** | Stop editing |
+| **V** + arrow | Move the focused card (within column or into adjacent column) |
+| **Delete** / **Backspace** | Delete the focused card |
 
 ## The `todo.md` format
 
@@ -105,6 +134,10 @@ npm run watch    # esbuild + tsc in watch mode
 
 Press `F5` to launch the extension dev host. Source lives in [src/extension.ts](src/extension.ts) (extension host) and [media/](media/) (webview).
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 ## License
 
 [MIT](LICENSE). Do whatever you want with this! (just don't blame me 😮)
@@ -123,10 +156,11 @@ Press `F5` to launch the extension dev host. Source lives in [src/extension.ts](
 ### Next up
 - [ ] **Toolbar toggle**: flip between kanban and markdown from the editor title bar (like Mermaid).
 - [ ] **Extension icon**: 128×128 PNG for the Marketplace listing.
-- [ ] **Keyboard shortcuts**: e.g. toggle complete and delete focused cards.
-- [ ] **README polish**: requirements section, commands table, CHANGELOG link.
-- [ ] **Demo assets**: better GIF and 2–3 static screenshots.
+- [x] **Keyboard shortcuts**: navigate, edit, complete, move, and delete focused cards.
+- [x] **README polish**: requirements section, commands table, CHANGELOG link.
+- [x] **Demo assets**: better GIF (screenshots added).
 - [ ] **Marketplace search screenshot**: once Bento shows up in search.
+- [ ] **Upload v0.0.2**: push README/GIF/screenshots to the Marketplace listing.
 
 ### Polish
 - [ ] **Stress testing**: empty `todo.md`, no columns, unicode, long text, 50+ cards, rapid drag-drop.

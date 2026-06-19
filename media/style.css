@@ -20,6 +20,12 @@ body {
     margin-bottom: 8px;
 }
 
+/* outline for when the keyboard focuses on a card. */
+.card.keyboard-focused {
+    outline: 2px solid var(--vscode-focusBorder, #007acc);
+    outline-offset: 2px;
+}
+
 /* greyed out add card styling: */
 .add-card {
     width: 100%;

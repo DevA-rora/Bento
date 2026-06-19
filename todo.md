@@ -23,29 +23,25 @@
 - [x] Rewrite README.md from scratch (replace the VSCode scaffold) (v1 is done)
 - [x] Verify Hackatime is logging this exact folder name
 - [x] Publish to the VSCode Marketplace
+- [x] Write up README.md
+- [x] ROADMAP
+- [x] Add badges
+- [x] Requirements
+- [x] Commands table
+- [x] CHANGELOG link
+- [x] Static screenshots (2-3 PNGS alongside GIF)
+- [x] Capture a demo GIF and 2-3 screenshots
+- [x] Add keyboard shortcuts in script.js webview (arrows, space, enter, tab, escape, v+arrow move, delete)
 
 # Doing
-- [-] Write up README.md
-- [ ] ROADMAP
-- [ ] Add badges
-- [ ] Requirements
-- [ ] Commands table
-- [ ] CHANGELOG link
-- [ ] Static screenshots (2-3 PNGS alongside GIF)
-- [ ] Markplace search screenshot (once it becomes visible!!!)
-
 
 # Todo 
-- [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
-- [ ] Capture a demo GIF and 2-3 screenshots
-Record: drag a card across columns, double-click edit, toggle complete, add card, add column, right-click delete. Save to assets/ and embed in README. Use ScreenToGif (Win) or Kap (Mac). Keep under 5MB.
-- [ ] Test the fresh-clone install flow end-to-end
-rm -rf node_modules dist, then npm install, npm run package, F5 launch, open a todo.md, verify every feature. If a stranger can't follow your README to a working extension, neither can a reviewer.
-- [ ] Submit the ship on macondo.hackclub.com
-URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
 - [ ] Design a 128x128 extension icon (PNG)
 Save as media/icon.png and reference via "icon": "media/icon.png" in package.json. Required for marketplace and a huge polish signal. Even a clean monochrome glyph works — log the design hours via a journal entry (not Hackatime, since it's not editor work).
-- [ ] Add keyboard shortcuts via package.json contributes.keybindings
+- [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
+- [ ] Test the fresh-clone install flow end-to-end
+rm -rf node_modules dist, then npm install, npm run package, F5 launch, open a todo.md, verify every feature. If a stranger can't follow your README to a working extension, neither can a reviewer.
+- [ ] Markplace search screenshot (once it becomes visible!!!)
 
 # Backlog (Polish — Starfruit Hunt)
 - [ ] Stress Testing / Bug fixes (get ready for shipping)
@@ -61,6 +57,8 @@ e.g. Cmd+Enter to toggle complete on focused card, Delete to delete focused card
 Repo settings -> About -> Topics: vscode-extension, kanban, productivity, todo, markdown, custom-editor. Pin from your GitHub profile (Customize your pins button). Per the shipping docs, this is one of the explicit checklist items.
 - [ ] Build a 7-14 day project streak before submitting
 +1% gold per consecutive day, snapshotted at ship time. 14 consecutive days of >=1hr Hackatime time on this project = 1.14x multiplier on EVERY hour you've ever logged. Buy streak freezes from the shop later to protect long streaks.
+- [ ] Submit the ship on macondo.hackclub.com
+URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
 
 # Todo (Innovation — Above & Beyond) --> Try to get that startfuit!!!
 - [ ] Deploy a landing page on Nest with a .dino.icu subdomain

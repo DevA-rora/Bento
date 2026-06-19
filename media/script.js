@@ -1,10 +1,13 @@
 // acquire the VSCode API:
 const vscode = acquireVsCodeApi();
 
+let focusedCardId = null; // which card is the keyboard focused on?
+let moveKeyHeld = false; // is V being held down?
+
 // after the user finishes a drag & drop:
-    // walk through the DOM
-    // read out which cards are in which columns
-    // "notify" the extension so it can save the new order to todo.md
+// walk through the DOM
+// read out which cards are in which columns
+// "notify" the extension so it can save the new order to todo.md
 function notifyReorder() {
     const columns = [];
     document.querySelectorAll('.card-list').forEach((listEl) => {
@@ -56,6 +59,92 @@ function showCardMenu(x, y, cardId, cardEl) {
         document.addEventListener('keydown', escClose);
     }, 0);
 }
+
+// helpers:
+function startEditing(cardEl) {
+    const titleEl = cardEl.querySelector('h3');
+    const descEl = cardEl.querySelector('p.description');
+    titleEl.contentEditable = 'true';
+    descEl.contentEditable = 'true';
+    titleEl.focus();
+}
+
+function stopEditing(cardEl) {
+    if (!cardEl) return;
+    const titleEl = cardEl.querySelector('h3');
+    const descEl = cardEl.querySelector('p.description');
+    titleEl.contentEditable = 'false';
+    descEl.contentEditable = 'false';
+    titleEl.blur();
+    descEl.blur();
+}
+
+function setFocusedCard(cardEl) {
+    document.querySelectorAll('.card.keyboard-focused').forEach(c => {
+        c.classList.remove('keyboard-focused');
+    });
+    if (cardEl) {
+        cardEl.classList.add('keyboard-focused');
+        focusedCardId = Number(cardEl.dataset.cardId);
+        cardEl.scrollIntoView({ block: 'nearest' });
+    } else {
+        focusedCardId = null;
+    }
+}
+
+function getFocusedCardEl() {
+    if (focusedCardId == null) return null;
+    return document.querySelector(`.card[data-card-id="${focusedCardId}"]`);
+}
+
+function isEditing() {
+    const el = document.activeElement;
+    return el && el.getAttribute('contenteditable') === 'true';
+}
+
+function getCardElementsInBoardOrder() {
+    const result = [];
+    document.querySelectorAll('.card-list').forEach(listEl => {
+        listEl.querySelectorAll('.card').forEach(cardEl => {
+            result.push(cardEl);
+        });
+    });
+    return result;
+}
+
+function moveCard(cardEl, key) {
+    const listEl = cardEl.closest('.card-list');
+    if (!listEl) return;
+
+    const siblings = [...listEl.querySelectorAll('.card')];
+    const i = siblings.indexOf(cardEl);
+
+    if (key === 'ArrowUp' || key === 'ArrowLeft') {
+        if (i > 0) {
+            listEl.insertBefore(cardEl, siblings[i - 1]);
+        } else {
+            const prevCol = listEl.closest('.column')?.previousElementSibling;
+            const prevList = prevCol?.classList.contains('column')
+                ? prevCol.querySelector('.card-list')
+                : null;
+            if (prevList) prevList.appendChild(cardEl);
+        }
+    } else if (key === 'ArrowDown' || key === 'ArrowRight') {
+        if (i < siblings.length - 1) {
+            listEl.insertBefore(siblings[i + 1], cardEl);
+        } else {
+            const nextCol = listEl.closest('.column')?.nextElementSibling;
+            const nextList = nextCol?.classList.contains('column')
+                ? nextCol.querySelector('.card-list')
+                : null;
+            if (nextList) nextList.insertBefore(cardEl, nextList.firstChild);
+        }
+    }
+
+    notifyReorder();
+    setFocusedCard(cardEl);
+}
+
 
 // build Kanban board UI from scratch in the WebView.
 function renderCards(cards, columns) {
@@ -178,13 +267,10 @@ function renderCards(cards, columns) {
         cardEl.appendChild(titleRow);
         cardEl.appendChild(descEl);
 
-        // when the user clicks a card twice, activate edit mode.
-        titleEl.addEventListener('dblclick', () => {
-            titleEl.contentEditable = 'true'; // lets you edit text for the todo title
-            // lets you edit text for the task description
-            descEl.contentEditable = 'true';
-            titleEl.focus(); // means the element is now recieving keyboard input.
-        });
+        cardEl.addEventListener('click', () => setFocusedCard(cardEl));
+
+        // start editing mode when double clicking a card.
+        titleEl.addEventListener('dblclick', () => startEditing(cardEl));
 
         // right click on each card:
         cardEl.addEventListener('contextmenu', (e) => {
@@ -230,6 +316,7 @@ function renderCards(cards, columns) {
             })
         })
 
+
         // find the right column and put the entire card in it:
         const listEl = document.getElementById('cardlist-' + card.column);
         listEl.appendChild(cardEl)
@@ -250,7 +337,96 @@ function renderCards(cards, columns) {
         handle: 'h2',
         onEnd: notifyReorder,
     });
+
+    // at end of renderCards(), after Sortable setup:
+    if (focusedCardId != null) {
+        const el = document.querySelector(`.card[data-card-id="${focusedCardId}"]`);
+        if (el) setFocusedCard(el);
+    }
 }
+
+document.addEventListener('keydown', (e) => {
+    if (isEditing()) {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const cardEl = getFocusedCardEl();
+            if (!cardEl) return;
+            const titleEl = cardEl.querySelector('h3');
+            const descEl = cardEl.querySelector('p.description');
+            if (e.shiftKey) {
+                if (document.activeElement === descEl) titleEl.focus();
+                else descEl.focus();
+            } else {
+                if (document.activeElement === titleEl) descEl.focus();
+                else titleEl.focus();
+            }
+        }
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            stopEditing(getFocusedCardEl());
+        }
+        return;
+    }
+
+    const cards = getCardElementsInBoardOrder();
+    if (cards.length === 0) return;
+
+    if (e.key === 'v') moveKeyHeld = true;
+
+    let index = cards.indexOf(getFocusedCardEl());
+    if (index === -1) {
+        if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {
+            setFocusedCard(cards[0]);
+            return;
+        }
+    }
+
+    const cardEl = getFocusedCardEl();
+
+    if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {
+        e.preventDefault();
+        if (moveKeyHeld && cardEl) {
+            moveCard(cardEl, e.key);
+        } else {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                setFocusedCard(cards[Math.min(index + 1, cards.length - 1)]);
+            } else {
+                setFocusedCard(cards[Math.max(index - 1, 0)]);
+            }
+        }
+        return;
+    }
+
+    if (e.key === ' ' && cardEl) {
+        e.preventDefault();
+        cardEl.classList.toggle('completed');
+        vscode.postMessage({ command: 'toggleComplete', id: focusedCardId });
+        return;
+    }
+
+    if (e.key === 'Enter' && cardEl) {
+        e.preventDefault();
+        startEditing(cardEl);
+        return;
+    }
+
+    if ((e.key === 'Delete' || e.key === 'Backspace') && cardEl) {
+        e.preventDefault();
+        const focusIndex = index;
+        cardEl.remove();
+        vscode.postMessage({ command: 'deleteCard', id: focusedCardId });
+        const remaining = getCardElementsInBoardOrder();
+        if (remaining.length === 0) {
+            setFocusedCard(null);
+        } else {
+            setFocusedCard(remaining[Math.min(focusIndex, remaining.length - 1)]);
+        }
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    if (e.key === 'v') moveKeyHeld = false;
+});
 
 // listener function
 window.addEventListener('message', (event) => {
