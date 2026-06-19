@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/version-0.0.2-blue)](https://github.com/DevA-rora/kanban-board-vscode/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Last commit](https://img.shields.io/github/last-commit/DevA-rora/kanban-board-vscode)
-[![Roadmap](https://img.shields.io/badge/roadmap-8%2F20%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
+[![Roadmap](https://img.shields.io/badge/roadmap-13%2F18%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
 
 > A Kanban Board built into VS Code. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
@@ -151,24 +151,20 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 - [x] **Completion toggle** with strike-through styling.
 - [x] **Card & column controls**: add cards, add columns, right-click delete.
 - [x] **Two-way markdown sync**: board edits save to `todo.md`; file edits re-render the board.
+- [x] **Theme-aware styling** via VS Code CSS variables (light, dark, high-contrast).
+- [x] **Keyboard shortcuts**: navigate, edit, complete, move, and delete focused cards.
+- [x] **Empty-state UI** when `todo.md` has no columns yet.
+- [x] **Extension icon** (128×128) for the Marketplace listing.
+- [x] **Demo assets**: GIF and screenshots in the README.
+- [x] **Docs**: README, CHANGELOG, and MIT license.
 - [x] **VS Code Marketplace**: [published and installable](https://marketplace.visualstudio.com/items?itemName=DevArora.bento).
 
 ### Next up
 - [ ] **Toolbar toggle**: flip between kanban and markdown from the editor title bar (like Mermaid).
-- [ ] **Extension icon**: 128×128 PNG for the Marketplace listing.
-- [x] **Keyboard shortcuts**: navigate, edit, complete, move, and delete focused cards.
-- [x] **README polish**: requirements section, commands table, CHANGELOG link.
-- [x] **Demo assets**: better GIF (screenshots added).
+- [ ] **Fresh-clone test**: verify someone can clone, build, and run from the README alone.
+- [ ] **Stress testing**: empty files, no columns, unicode, long text, 50+ cards, rapid drag-drop.
 - [ ] **Marketplace search screenshot**: once Bento shows up in search.
-- [ ] **Upload v0.0.2**: push README/GIF/screenshots to the Marketplace listing.
+- [ ] **Macondo ship**: submit for review on [macondo.hackclub.com](https://macondo.hackclub.com).
 
-### Polish
-- [ ] **Stress testing**: empty `todo.md`, no columns, unicode, long text, 50+ cards, rapid drag-drop.
-- [ ] **Light-theme fix**: replace hardcoded colours with VS Code CSS variables.
-- [ ] **Empty-state UI**: hint when `todo.md` has no columns yet.
-
-### Ideas (starfruit: only if I keep scope minimal)
-- [ ] **Landing page**: static site on a `.dino.icu` subdomain.
-- [ ] **Walkthrough video**: short demo on YouTube, linked from the README.
-- [ ] **Due date syntax**: optional `@2026-08-15` pills on cards.
-- [ ] **Card colours / labels**: optional tag syntax (e.g. `#urgent`, `:red:`).
+### Out of scope (by design)
+Bento stays minimal — plain `todo.md`, no extra syntax in the file. Not planning due dates, labels, card colours, or a separate landing page; the README and Marketplace listing are the product page. Optional later: a short demo video.

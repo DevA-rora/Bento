@@ -40,24 +40,15 @@
 - [x] Design a 128x128 extension icon (PNG)
 
 # Doing
+- [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
 
 # Todo 
-- [ ] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
 - [ ] Test the fresh-clone install flow end-to-end
 rm -rf node_modules dist, then npm install, npm run package, F5 launch, open a todo.md, verify every feature. If a stranger can't follow your README to a working extension, neither can a reviewer.
-
-# Backlog (Polish — Starfruit Hunt)
-- [ ] Markplace search screenshot (once it becomes visible!!!)
 - [ ] Stress Testing / Bug fixes (get ready for shipping)
 Try: empty todo.md, todo.md with no columns, weird unicode in titles, very long descriptions, 50+ cards in one column, rapid drag-drop spam.
-- [ ] Submit the ship on macondo.hackclub.com
-URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
-
-# Todo (Innovation — Above & Beyond) --> Try to get that startfuit!!!
 - [ ] Deploy a landing page on Nest with a .dino.icu subdomain
 Free per Macondo. hackclub.app for the VPS, github.com/hackclub/dns PR for the domain. One static page with logo, GIF, install button, install commands, GitHub link. Takes ~30 minutes, reads as "real product".
-YouTube unlisted is fine. Show the problem (todo.md is fine but visual kanban is faster), then the solution. Drop the link in the README and your project page. Optional: post to r/vscode or r/programming for some shipping juice.
-- [ ] Add a "due date" badge syntax to todo.md
-Parse e.g. "- [ ] Buy milk @2026-08-15" into a card with a small date pill. Keeps the markdown human-readable but adds a visible feature. Bidirectional sync still works because you control the parser.
-- [ ] Add card colours / labels via emoji or tag syntax
-e.g. lines starting with #urgent or :red: render a coloured stripe. Differentiator vs every other todo extension on the marketplace.
+- [ ] Submit the ship on macondo.hackclub.com
+URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
+- [ ] Markplace search screenshot (once it becomes visible!!!)
