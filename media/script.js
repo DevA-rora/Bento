@@ -62,11 +62,13 @@ function showCardMenu(x, y, cardId, cardEl) {
 
 // helpers:
 function startEditing(cardEl) {
+    setFocusedCard(cardEl);
     const titleEl = cardEl.querySelector('h3');
     const descEl = cardEl.querySelector('p.description');
     titleEl.contentEditable = 'true';
     descEl.contentEditable = 'true';
     titleEl.focus();
+    scrollCardIntoView(cardEl);
 }
 
 function stopEditing(cardEl) {
@@ -79,6 +81,18 @@ function stopEditing(cardEl) {
     descEl.blur();
 }
 
+function scrollCardIntoView(cardEl) {
+    // Defer until after layout so scrollIntoView sees final card positions
+    // (especially after a full board re-render or Sortable move).
+    requestAnimationFrame(() => {
+        cardEl.scrollIntoView({
+            block: 'center',
+            inline: 'center',
+            behavior: 'auto',
+        });
+    });
+}
+
 function setFocusedCard(cardEl) {
     document.querySelectorAll('.card.keyboard-focused').forEach(c => {
         c.classList.remove('keyboard-focused');
@@ -86,7 +100,7 @@ function setFocusedCard(cardEl) {
     if (cardEl) {
         cardEl.classList.add('keyboard-focused');
         focusedCardId = Number(cardEl.dataset.cardId);
-        cardEl.scrollIntoView({ block: 'nearest' });
+        scrollCardIntoView(cardEl);
         document.querySelector('.board')?.focus({ preventScroll: true });
     } else {
         focusedCardId = null;
@@ -132,6 +146,56 @@ function getCardElementsInBoardOrder() {
         });
     });
     return result;
+}
+
+function getColumnCardLists() {
+    return [...document.querySelectorAll('.card-list')];
+}
+
+function getCardPosition(cardEl) {
+    const listEl = cardEl.closest('.card-list');
+    const lists = getColumnCardLists();
+    const colIdx = lists.indexOf(listEl);
+    const rowIdx = [...listEl.querySelectorAll('.card')].indexOf(cardEl);
+    return { colIdx, rowIdx };
+}
+
+function getCardAtPosition(lists, colIdx, rowIdx) {
+    if (colIdx < 0 || colIdx >= lists.length) return null;
+    const cards = [...lists[colIdx].querySelectorAll('.card')];
+    if (cards.length === 0) return null;
+    return cards[Math.min(rowIdx, cards.length - 1)];
+}
+
+function findAdjacentColumnCard(lists, startColIdx, rowIdx, direction) {
+    const step = direction === 'ArrowRight' ? 1 : -1;
+    for (let colIdx = startColIdx + step; colIdx >= 0 && colIdx < lists.length; colIdx += step) {
+        const card = getCardAtPosition(lists, colIdx, rowIdx);
+        if (card) return card;
+    }
+    return null;
+}
+
+function navigateFocus(cardEl, key) {
+    const lists = getColumnCardLists();
+    const { colIdx, rowIdx } = getCardPosition(cardEl);
+
+    if (key === 'ArrowUp') {
+        const card = getCardAtPosition(lists, colIdx, rowIdx - 1);
+        if (card) setFocusedCard(card);
+        return;
+    }
+
+    if (key === 'ArrowDown') {
+        const card = getCardAtPosition(lists, colIdx, rowIdx + 1);
+        if (card) setFocusedCard(card);
+        return;
+    }
+
+    if (key === 'ArrowLeft' || key === 'ArrowRight') {
+        const card = findAdjacentColumnCard(lists, colIdx, rowIdx, key);
+        if (card) setFocusedCard(card);
+    }
 }
 
 function moveCard(cardEl, key) {
@@ -363,7 +427,11 @@ function renderCards(cards, columns) {
     // at end of renderCards(), after Sortable setup:
     if (focusedCardId != null) {
         const el = document.querySelector(`.card[data-card-id="${focusedCardId}"]`);
-        if (el) setFocusedCard(el);
+        if (el) {
+            setFocusedCard(el);
+        } else {
+            focusedCardId = null;
+        }
     }
 }
 
@@ -382,6 +450,7 @@ document.addEventListener('keydown', (e) => {
                 if (document.activeElement === titleEl) descEl.focus();
                 else titleEl.focus();
             }
+            scrollCardIntoView(cardEl);
         }
         if (e.key === 'Escape') {
             e.preventDefault();
@@ -409,12 +478,8 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
         if (moveKeyHeld && cardEl) {
             moveCard(cardEl, e.key);
-        } else {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                setFocusedCard(cards[Math.min(index + 1, cards.length - 1)]);
-            } else {
-                setFocusedCard(cards[Math.max(index - 1, 0)]);
-            }
+        } else if (cardEl) {
+            navigateFocus(cardEl, e.key);
         }
         return;
     }
@@ -468,13 +533,16 @@ window.addEventListener('message', (event) => {
         // if the extension told us to auto-edit a new card, then do it now:
         if (message.focusNewInColumn) {
             const listEl = document.getElementById('cardlist-' + message.focusNewInColumn);
-            const lastCard = listEl.lastElementChild;
+            const lastCard = listEl?.querySelector('.card:last-of-type');
             if (lastCard) {
+                setFocusedCard(lastCard);
                 const titleEl = lastCard.querySelector('h3');
                 const descEl = lastCard.querySelector('p.description');
                 titleEl.contentEditable = 'true';
+                descEl.contentEditable = 'true';
                 titleEl.focus();
                 document.getSelection().selectAllChildren(titleEl); // preselects the new task.
+                scrollCardIntoView(lastCard);
             }
         }
     }

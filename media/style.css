@@ -11,6 +11,9 @@ body {
 /* baseline card styling: */
 .card {
     cursor: grab;
+    position: relative;
+    box-sizing: border-box;
+    max-width: 100%;
     /* match background, colour, and border to match with the user's VSCode theme. */
     background: var(--vscode-editorWidget-background, #2d2d2d);
     color: var(--vscode-editorWidget-foreground, var(--vscode-foreground, #ccc));
@@ -18,12 +21,35 @@ body {
     border-radius: 6px;
     padding: 8px 12px;
     margin-bottom: 8px;
+    /* keep focus rings visible when scrollIntoView runs */
+    scroll-margin: 16px;
+    transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
-/* outline for when the keyboard focuses on a card. */
+/* clear, high-contrast focus state for keyboard / click selection */
 .card.keyboard-focused {
-    outline: 2px solid var(--vscode-focusBorder, #007acc);
-    outline-offset: 2px;
+    z-index: 1;
+    background: var(--vscode-list-activeSelectionBackground, rgba(0, 122, 204, 0.22));
+    color: var(--vscode-list-activeSelectionForeground, var(--vscode-editorWidget-foreground, #ccc));
+    border-color: var(--vscode-focusBorder, #007acc);
+    box-shadow:
+        0 0 0 2px var(--vscode-focusBorder, #007acc),
+        0 0 0 4px color-mix(in srgb, var(--vscode-focusBorder, #007acc) 30%, transparent),
+        0 4px 14px rgba(0, 0, 0, 0.28);
+}
+
+.card.keyboard-focused::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 6px 0 0 6px;
+    background: var(--vscode-focusBorder, #007acc);
+    pointer-events: none;
 }
 
 /* greyed out add card styling: */
@@ -47,13 +73,16 @@ body {
     background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.03));
 }
 
-/* card completed styling: */
-/* dim + strikethrough --> opacity is theme-agnostic */
-.card.completed {
-    /* make entire card 50% transparent */
-    opacity: 0.5;
-    /* strikethrough */
+/* card completed styling: dim text only so the focus ring stays visible */
+.card.completed .title-row h3,
+.card.completed .description {
+    opacity: 0.55;
     text-decoration: line-through;
+}
+
+.card.completed.keyboard-focused .title-row h3,
+.card.completed.keyboard-focused .description {
+    opacity: 0.9;
 }
 
 /* when the user "grabs" the card with their cursor, change the mouse to be "grabbing" */
@@ -102,6 +131,10 @@ body {
 .card p {
     /* make checkCircle inline w/the text */
     margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 
 .card h3[contenteditable="true"]:focus {
@@ -110,8 +143,9 @@ body {
     border-radius: 2px;
 }
 
-/* style the card if it contains a focused editable h3 */
-.card:has(h3[contenteditable="true"]:focus) {
+/* editing affordance when the card isn't already keyboard-selected */
+.card:has(h3[contenteditable="true"]:focus):not(.keyboard-focused),
+.card:has(p.description[contenteditable="true"]:focus):not(.keyboard-focused) {
     background: var(--vscode-input-background, #3a3a3a);
     border-color: var(--vscode-focusBorder, #007acc);
 }
@@ -137,6 +171,7 @@ body {
     /* puts 16px space between flex items */
     padding: 16px;
     /* space between edge of webview & columns */
+    outline: none;
 }
 
 .column {
@@ -144,6 +179,10 @@ body {
     /* each column takes equal share of the row. */
     min-width: 0;
     /* allows column to shrink as required. (whatever that means) */
+}
+
+.card-list {
+    min-width: 0;
 }
 
 
