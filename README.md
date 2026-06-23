@@ -1,10 +1,11 @@
 # 🍱 Bento: A Kanban Board for VS Code
 
 [![VS Code Marketplace](https://img.shields.io/badge/VS%20Marketplace-Install-007ACC?logo=visualstudiocode)](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
-[![Version](https://img.shields.io/badge/version-0.0.2-blue)](https://github.com/DevA-rora/Bento/releases)
+[![Open VSX](https://img.shields.io/badge/Open%20VSX-Install-6B4FBB)](https://open-vsx.org/extension/DevArora/bento)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/DevA-rora/Bento/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Last commit](https://img.shields.io/github/last-commit/DevA-rora/Bento)
-[![Roadmap](https://img.shields.io/badge/roadmap-13%2F18%20%C2%B7%20%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%88%E2%96%91%E2%96%91%E2%96%91%E2%96%91%E2%96%91-22c55e)](#roadmap)
+[![Roadmap](https://img.shields.io/badge/roadmap-v1.0.0%20shipped-22c55e)](#roadmap)
 
 > A Kanban Board built into VS Code. Edit your `todo.md` like a Trello board, save it like a markdown file. No accounts, servers, or syncing. Just a file in your repo!
 
@@ -152,7 +153,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## Roadmap
 
-### Shipped
+### Shipped (v1.0.0)
 - [x] **Kanban custom editor** for `todo.md` in VS Code.
 - [x] **Drag-and-drop** cards between columns and reorder columns on the board.
 - [x] **Inline editing** for card titles and descriptions.
@@ -160,20 +161,20 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 - [x] **Card & column controls**: add cards, add columns, right-click delete.
 - [x] **Two-way markdown sync**: board edits save to `todo.md`; file edits re-render the board.
 - [x] **Theme-aware styling** via VS Code CSS variables (light, dark, high-contrast).
-- [x] **Keyboard shortcuts**: navigate, edit, complete, move, and delete focused cards.
+- [x] **Keyboard shortcuts**: arrow navigation, **n** for new card, **V** + arrow to move cards, Space / Enter / Tab / Escape / Delete.
+- [x] **Toolbar toggle**: flip between kanban and markdown from the editor title bar.
 - [x] **Empty-state UI** when `todo.md` has no columns yet.
 - [x] **Extension icon** (128×128) for the Marketplace listing.
 - [x] **Demo assets**: GIF and screenshots in the README.
 - [x] **Docs**: README, CHANGELOG, and MIT license.
 - [x] **VS Code Marketplace**: [published and installable](https://marketplace.visualstudio.com/items?itemName=DevArora.bento).
-- [x] **Marketplace search screenshot**: once Bento shows up in search.
+- [x] **Open VSX Registry**: [published for VS Code forks](https://open-vsx.org/extension/DevArora/bento) (Cursor, VSCodium, etc.).
+- [x] **v1 polish**: focus ring, long-description wrapping, optimistic sync (no Cmd+S snap-back), instant delete.
+- [x] **Fresh-clone install flow** verified end-to-end.
+- [x] **Macondo ship** submitted on [macondo.hackclub.com](https://macondo.hackclub.com).
 
 ### Next up
-- [x] **Toolbar toggle**: flip between kanban and markdown from the editor title bar (like Mermaid).
-- [ ] **Fresh-clone test**: verify someone can clone, build, and run from the README alone.
-- [ ] **Stress testing**: empty files, no columns, unicode, long text, 50+ cards, rapid drag-drop.
-- [ ] Publish to the "Open VSX Registery" [here](https://open-vsx.org/) to view the extension on open-source forks of VS Code.
-- [ ] **Macondo ship**: submit for review on [macondo.hackclub.com](https://macondo.hackclub.com).
+- [ ] **Open VSX verified publisher** — namespace ownership claim for `DevArora` (pending).
 
 ### Out of scope (by design)
 Bento stays minimal. Plain `todo.md`, no extra syntax in the file. Not planning due dates, labels, card colours, or a separate landing page; the README and Marketplace listing are the product page.
