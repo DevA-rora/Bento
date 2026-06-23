@@ -45,11 +45,14 @@ Bento is now published on the VS Code Marketplace!
 To instally, simply search for the "Bento" extension in your VS Code extensions mangager.
 
 You can alternatively use the direct link here: [Install Bento From Marketplace](https://marketplace.visualstudio.com/items?itemName=DevArora.bento)
-> Note that this extension will NOT show up on open-source VS Code forks like VSCodium or Cursor. They will show up once I publish the package on the "Open VSC Registery" (coming soon!)
+
+Bento is also on the [Open VSX Registry](https://open-vsx.org/extension/DevArora/bento)
+
+> This extension will also show up in open-source VS Code forks such as VSCodium or Cursor because this extension is also published on the open vsx registry!
 
 ### From a `.vsix` file
 
-1. Download `bento-0.0.2.vsix` from [Releases](https://github.com/DevA-rora/Bento/releases/latest).
+1. Download `bento-1.0.0.vsix` from [Releases](https://github.com/DevA-rora/Bento/releases/latest).
 2. In VS Code: `Cmd/Ctrl+Shift+P` → **Extensions: Install from VSIX…** → select the file.
 3. Reload VS Code if prompted.
 

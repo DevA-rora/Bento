@@ -39,21 +39,18 @@
 - [x] Build a 7-14 day project streak before submitting
 - [x] Design a 128x128 extension icon (PNG)
 - [x] Markplace search screenshot (once it becomes visible!!!)
-- [x] **Toolbar toggle** — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
+- [x] Toolbar toggle — flip between the kanban view and the raw markdown via the title-bar buttons (like mermaid buttons)
 - [x] Stress Testing / Bug fixes (get ready for shipping)
 - [x] You can't see the focused card sometimes (there are bugs & stuff) (don't know what causes it...)
 - [x] Fix long description bug
 - [x] Test different colour themes
 - [x] Fix card deletion bug (not instantanous sync)
 - [x] Add new keyboard shortcut "n" to make a new card. 
+- [x] Polishing & testing...
+- [x] Test the fresh-clone install flow end-to-end
+- [x] Publish to Open VSX registery (to use the extension on open-source VS Code forks)
+- [x] That's it!!! Submit the ship on macondo.hackclub.com
 
 # Doing
-- [ ] Polishing & testing...
 
 # Todo
-- [ ] Test the fresh-clone install flow end-to-end
-rm -rf node_modules dist, then npm install, npm run package, F5 launch, open a todo.md, verify every feature. If a stranger can't follow your README to a working extension, neither can a reviewer.
-- [ ] Publish to Open VSX registery (to use the extension on open-source VS Code forks)
-https://open-vsx.org/
-- [ ] Submit the ship on macondo.hackclub.com
-URL field = GitHub repo (or marketplace listing if published). Pick level L2 minimum (L3 if you can justify it — multiple subsystems: parser, serialiser, custom editor, webview IPC, file watcher). Honestly describe any AI usage. Hit submit.
